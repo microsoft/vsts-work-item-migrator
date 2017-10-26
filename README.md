@@ -4,6 +4,8 @@ WiMigrator is a command line tool designed with the following goals in mind:
 * Real world example of how to use the WIT REST APIs
 * Cross platform support
 
+![Build Status](https://vsts-wit.visualstudio.com/_apis/public/build/definitions/2a08f204-c80c-4f7e-82c8-f27e28f2becd/1/badge)
+
 # Features
 * Migrate the latest revision of a work item, including:
   * Work item links
