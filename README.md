@@ -7,16 +7,17 @@ WiMigrator is a command line tool designed with the following goals in mind:
 ![Build Status](https://vsts-wit.visualstudio.com/_apis/public/build/definitions/2a08f204-c80c-4f7e-82c8-f27e28f2becd/1/badge)
 
 # Features
-* Migrate the latest revision of a work item, including:
-  * Work item links
+* Migrate the latest revision of a work item or set of work items based on the provided query, including:
+  * Work item links (for work items within the query results set) 
   * Attachments
   * Git commit links (link to the source git commit)
   * Work item history (last 200 revisions as an attachment)
+  * Tagging of the source items that have been migrated
 
 # Getting Started
 ## Requirements
-* Source Project on **VSTS** or **TFS 2017 Update 2**
-* Target Project on **VSTS** or **TFS 2018**
+* Source Project on **VSTS** or **TFS 2017 Update 2** or later
+* Target Project on **VSTS** or **TFS 2018** or later
 * Personal access tokens or NTLM for authentication 
 * Project Collection Administrator permissions required on target project
 * Process metadata **should** be consistent between the processes
@@ -49,6 +50,7 @@ dotnet run -v configuration.json
 ## Limitations:
   * Artifact links (other than git) are not migrated
   * Board fields are not migrated
+  * Test artifacts (e.g. test results) are not migrated
 
 # Contributing
 
