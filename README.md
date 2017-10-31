@@ -7,9 +7,8 @@ WiMigrator is a command line tool designed with the following goals in mind:
 ![Build Status](https://vsts-wit.visualstudio.com/_apis/public/build/definitions/2a08f204-c80c-4f7e-82c8-f27e28f2becd/1/badge)
 
 # Features
-* Migrate the latest revision of a work item, including:
-* Migrate the latest revision of a work item or set of work items based on provided, including:
-  * Work item links ( for work items within the query results set) 
+* Migrate the latest revision of a work item or set of work items based on the provided query, including:
+  * Work item links (for work items within the query results set) 
   * Attachments
   * Git commit links (link to the source git commit)
   * Work item history (last 200 revisions as an attachment)
