@@ -36,7 +36,7 @@ namespace Common.Migration
             {
                 foreach (WorkItemRelation sourceGitCommitLinkRelation in sourceGitCommitLinksRelations)
                 {
-                    string adjustedUrl = ConvertGitCommitLinkToHyperLink(sourceWorkItem.Id.Value, sourceGitCommitLinkRelation.Url, migrationContext.Config.TargetConnection.Account);
+                    string adjustedUrl = ConvertGitCommitLinkToHyperLink(sourceWorkItem.Id.Value, sourceGitCommitLinkRelation.Url, migrationContext.Config.SourceConnection.Account);
                     WorkItemRelation targetGitCommitHyperlinkRelation = GetGitCommitHyperlinkIfExistsOnTarget(targetWorkItem, adjustedUrl);
 
                     if (targetGitCommitHyperlinkRelation != null) // is on target
@@ -80,9 +80,6 @@ namespace Common.Migration
             {
                 if (targetRelation.Rel.Equals(Constants.Hyperlink) && targetRelation.Url.Equals(href, StringComparison.OrdinalIgnoreCase))
                 {
-                    string comment = MigrationHelpers.GetCommentFromAttributes(targetRelation);
-                    object relationAttributeId = GetIdFromAttributes(targetRelation);
-
                     return targetRelation;
                 }
             }
