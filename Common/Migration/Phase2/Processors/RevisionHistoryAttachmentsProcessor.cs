@@ -55,7 +55,7 @@ namespace Common.Migration
                     var stringBytes = System.Text.Encoding.UTF8.GetBytes(attachmentContent);
                     await stream.WriteAsync(stringBytes, 0, stringBytes.Length);
                     stream.Position = 0;
-                    //upload the attachment to the target for each workitem
+                    //upload the attachment to the target for each batch of workitem updates
                     attachmentReference = await WorkItemTrackingHelpers.CreateAttachmentAsync(migrationContext.TargetClient.WorkItemTrackingHttpClient, stream);
                     attachmentLinks.Add(
                         new AttachmentLink(
