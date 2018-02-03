@@ -46,6 +46,10 @@ namespace Common.Config
         [DefaultValue(false)]
         public bool MoveHistory { get; set; }
 
+        [JsonProperty(PropertyName = "move-history-limit", DefaultValueHandling = DefaultValueHandling.Populate)]
+        [DefaultValue(200)]
+        public int MoveHistoryLimit { get; set; }
+
         [JsonProperty(PropertyName = "move-git-links", DefaultValueHandling = DefaultValueHandling.Populate)]
         [DefaultValue(false)]
         public bool MoveGitLinks { get; set; }

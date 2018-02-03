@@ -131,18 +131,20 @@ namespace Common.Migration
             return jsonPatchOperation;
         }
 
-        public static JsonPatchOperation GetRevisionHistoryAttachmentAddOperation(AttachmentReference attachmentReference, int workItemId)
+        public static JsonPatchOperation GetRevisionHistoryAttachmentAddOperation(AttachmentLink attachmentLink, int workItemId)
         {
             JsonPatchOperation jsonPatchOperation = new JsonPatchOperation();
             jsonPatchOperation.Operation = Operation.Add;
             jsonPatchOperation.Path = $"/{Constants.Relations}/-";
-            jsonPatchOperation.Value = new
+            jsonPatchOperation.Value = new WorkItemRelation
             {
-                rel = Constants.AttachedFile,
-                url = attachmentReference.Url,
-                attributes = new
+                Rel = Constants.AttachedFile,
+                Url = attachmentLink.AttachmentReference.Url,
+                Attributes = new Dictionary<string, object>
                 {
-                    name = $"{Constants.WorkItemHistory}{workItemId}.json"
+                    {  Constants.RelationAttributeName, attachmentLink.FileName },
+                    {  Constants.RelationAttributeResourceSize,  attachmentLink.ResourceSize },
+                    {  Constants.RelationAttributeComment,  attachmentLink.Comment }
                 }
             };
 

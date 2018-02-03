@@ -56,9 +56,12 @@
   // when false, it will update any previously migrated work items
   // that have changed on the source since the migration was completed.
   "skip-existing": true,
-  // create a json file containing the last 200 updates of the source
+  // create a json file containing the updates of the source
   // work item and attach it to the migrated work item.
   "move-history": false,
+  // the limit to the number of updates of the source work item
+  // to attach to the migrated work item.
+  "move-history-limit": 200,
   // migrate git commit links as hyperlinks that point to the
   // web view of the commit on the source account.
   "move-git-links": false,
