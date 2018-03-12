@@ -77,11 +77,11 @@ namespace Common
             }, 5);
         }
 
-        public async static Task<List<WorkItemUpdate>> GetWorkItemUpdatesAsync(WorkItemTrackingHttpClient client, int id)
+        public async static Task<List<WorkItemUpdate>> GetWorkItemUpdatesAsync(WorkItemTrackingHttpClient client, int id, int skip = 0)
         {
             return await RetryHelper.RetryAsync(async () =>
             {
-                return await client.GetUpdatesAsync(id, Constants.RevisionNumber);
+                return await client.GetUpdatesAsync(id, Constants.PageSize, skip: skip);
             }, 5);
         }
 

@@ -5,7 +5,7 @@ namespace Common
     public class Constants
     {
         public const int BatchSize = 200;
-        public const int RevisionNumber = 200;
+        public const int PageSize = 200;
 
         public const string Hyperlink = "Hyperlink";
         public const string AttachedFile = "AttachedFile";
