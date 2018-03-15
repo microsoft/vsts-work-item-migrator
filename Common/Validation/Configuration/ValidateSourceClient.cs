@@ -27,7 +27,9 @@ namespace Common.Validation
                 Logger.LogInformation(LogDestination.File, "source-post-move-tag is specified, checking write permissions on the source project");
                 
                 await ValidationHelpers.CheckConnection(context.SourceClient, context.Config.SourceConnection.Project, ValidationHelpers.WritePermission);
-                await ValidationHelpers.CheckIdentity(context.SourceClient, context.Config.SourceConnection.Project);
+                await ValidationHelpers.CheckConnection(context.SourceClient, context.Config.SourceConnection.Project, ValidationHelpers.BypassRulesPermission);
+                await ValidationHelpers.CheckConnection(context.SourceClient, context.Config.SourceConnection.Project, ValidationHelpers.SuppressNotificationsPermission);
+                //await ValidationHelpers.CheckIdentity(context.SourceClient, context.Config.SourceConnection.Project);
             }
         }
     }

@@ -14,7 +14,9 @@ namespace Common.Validation
         public async Task Validate(IValidationContext context)
         {
             await ValidationHelpers.CheckConnection(context.TargetClient, context.Config.TargetConnection.Project, ValidationHelpers.WritePermission);
-            await ValidationHelpers.CheckIdentity(context.TargetClient, context.Config.TargetConnection.Project);
+            await ValidationHelpers.CheckConnection(context.TargetClient, context.Config.TargetConnection.Project, ValidationHelpers.BypassRulesPermission);
+            await ValidationHelpers.CheckConnection(context.TargetClient, context.Config.TargetConnection.Project, ValidationHelpers.SuppressNotificationsPermission);
+            //await ValidationHelpers.CheckIdentity(context.TargetClient, context.Config.TargetConnection.Project);
         }
     }
 }

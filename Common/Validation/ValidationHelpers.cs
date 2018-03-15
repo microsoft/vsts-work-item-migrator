@@ -21,6 +21,12 @@ namespace Common.Validation
         //WORK_ITEM_WRITE has an int value of 32  
         public const int WritePermission = 32;
 
+        //WORK_ITEM_WRITE has an int value of 1048576  
+        public const int BypassRulesPermission = 1048576;
+
+        //WORK_ITEM_WRITE has an int value of 2097152  
+        public const int SuppressNotificationsPermission = 2097152;
+
         public async static Task CheckConnection(WorkItemClientConnection client, string project, int requestedPermission)
         {
             Logger.LogInformation($"Checking security permissions for {client.Connection.AuthorizedIdentity.DisplayName} in {project}");
