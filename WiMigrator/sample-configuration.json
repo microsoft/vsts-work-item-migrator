@@ -129,6 +129,7 @@
   // the smtp-server.
   "email-notification": {
     "smtp-server": "127.0.0.1",
+    "use-ssl": false,
     "port": "25",
     "from-address": "wimigrator@example.com",
     "user-name": "un",
