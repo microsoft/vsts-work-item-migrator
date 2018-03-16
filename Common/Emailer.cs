@@ -32,7 +32,7 @@ namespace Logging
             }
 
             SmtpClient client = new SmtpClient(emailNotification.SmtpServer, emailNotification.Port);
-            //client.EnableSsl = true; // need to figure this out! Maybe don't need?
+            client.EnableSsl = emailNotification.UseSsl;
             client.UseDefaultCredentials = false;
             client.Credentials = new NetworkCredential(emailNotification.UserName, emailNotification.Password);
             MailMessage message = new MailMessage();

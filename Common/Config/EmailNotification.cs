@@ -9,6 +9,10 @@ namespace Common.Config
         [JsonProperty(PropertyName = "smtp-server", Required = Required.Always)]
         public string SmtpServer { get; set; }
 
+        [JsonProperty(PropertyName = "use-ssl", DefaultValueHandling = DefaultValueHandling.Populate)]
+        [DefaultValue(false)]
+        public bool UseSsl { get; set; }
+
         [JsonProperty(PropertyName = "port", DefaultValueHandling = DefaultValueHandling.Populate)]
         [DefaultValue(25)]
         public int Port { get; set; }
