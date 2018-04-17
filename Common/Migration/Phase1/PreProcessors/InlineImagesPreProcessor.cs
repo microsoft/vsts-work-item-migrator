@@ -69,7 +69,13 @@ namespace Common.Migration
 
         private async Task ProcessInlineImagesForHtmlField(IBatchMigrationContext batchContext, int sourceWorkItemId, KeyValuePair<string, object> field)
         {
-            string fieldHtmlContent = (string)field.Value; // we are assuming that this will always be convertable to string
+            // we are assuming that this will always be a string, so log if it is not
+            if (!(field.Value is string))
+            {
+                Logger.LogWarning(LogDestination.File, $"Unexpected value for html field {field.Key} for source work item {sourceWorkItemId}");
+            }
+
+            string fieldHtmlContent = field.Value as string; 
             HashSet<string> inlineImageUrls = MigrationHelpers.GetInlineImageUrlsFromField(fieldHtmlContent, this.context.SourceClient.Connection.Uri.AbsoluteUri);
 
             foreach (string inlineImageUrl in inlineImageUrls)

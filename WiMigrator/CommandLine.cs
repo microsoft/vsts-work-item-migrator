@@ -161,7 +161,7 @@ namespace WiMigrator
             }
             catch (Exception e)
             {
-                Logger.LogError(LogDestination.All, e, "Unexpected error:");
+                Logger.LogError(LogDestination.All, e, $"Unexpected error: {e}");
             }
             finally
             {
