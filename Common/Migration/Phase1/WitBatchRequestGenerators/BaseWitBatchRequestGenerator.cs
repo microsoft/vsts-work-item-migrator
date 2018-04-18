@@ -110,7 +110,8 @@ namespace Common.Migration
 
                     // add inline image urls
                     JsonPatchOperation jsonPatchOperation;
-                    if (this.migrationContext.HtmlFieldReferenceNames.Contains(preparedField.Key))
+                    if (this.migrationContext.HtmlFieldReferenceNames.Contains(preparedField.Key) 
+                        && preparedField.Value is string)
                     {
                         string updatedHtmlFieldValue = GetUpdatedHtmlField((string)preparedField.Value);
                         KeyValuePair<string, object> updatedField = new KeyValuePair<string, object>(preparedField.Key, updatedHtmlFieldValue);
