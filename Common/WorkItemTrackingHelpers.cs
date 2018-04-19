@@ -312,7 +312,7 @@ namespace Common
         {
             return await RetryHelper.RetryAsync(async () =>
              {
-                 return await client.GetWorkItemIdsForArtifactUrisAsync(query);
+                 return await client.QueryWorkItemsForArtifactUrisAsync(query);
              }, 5);
         }
     }
