@@ -49,7 +49,7 @@ namespace Common.Validation
                     context.SourceClient.WorkItemTrackingHttpClient,
                     context.Config.SourceConnection.Project,
                     context.Config.Query,
-                    context.Config.TargetPostMoveTag,
+                    context.Config.SourcePostMoveTag,
                     context.Config.QueryPageSize - 1 /* Have to subtract -1 from the page size due to a bug in how query interprets page size */);
 
                     context.WorkItemIdsUris = new ConcurrentDictionary<int, string>(workItemUris);
