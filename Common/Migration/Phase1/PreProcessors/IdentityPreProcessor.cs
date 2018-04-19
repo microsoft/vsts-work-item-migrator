@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Common.Config;
+using Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.TeamFoundation.Framework.Common;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.Graph.Client;
+using Microsoft.VisualStudio.Services.Identity;
+using Microsoft.VisualStudio.Services.Identity.Client;
+using Microsoft.VisualStudio.Services.Licensing.Client;
 using static Microsoft.VisualStudio.Services.Graph.Constants;
-using Common.Config;
-using Logging;
 
 namespace Common.Migration
 {
@@ -19,6 +22,8 @@ namespace Common.Migration
 
         private IMigrationContext context;
         private GraphHttpClient graphClient;
+        private LicensingHttpClient licensingHttpClient;
+        private IdentityHttpClient identityHttpClient;
 
         public string Name => "Identity";
 
@@ -31,6 +36,8 @@ namespace Common.Migration
         {
             this.context = context;
             this.graphClient = context.TargetClient.Connection.GetClient<GraphHttpClient>();
+            this.licensingHttpClient = context.TargetClient.Connection.GetClient<LicensingHttpClient>();
+            this.identityHttpClient = context.TargetClient.Connection.GetClient<IdentityHttpClient>();
         }
 
         public async Task Process(IBatchMigrationContext batchContext)
@@ -69,15 +76,33 @@ namespace Common.Migration
             {
                 try
                 {
-                    await RetryHelper.RetryAsync(async () =>
+                    var createUserResult = await RetryHelper.RetryAsync(async () =>
                     {
                         return await graphClient.CreateUserAsync(new GraphUserPrincipalNameCreationContext()
                         {
                             PrincipalName = identity
-                        }, Groups);
+                        });
                     }, 5);
 
-                    context.ValidatedIdentities.Add(identity);
+                    // using identity from createUserResult since the identity could be in a mangled format that ReadIdentities does not support
+                    var identities = await RetryHelper.RetryAsync(async () =>
+                    {
+                        return await identityHttpClient.ReadIdentitiesAsync(IdentitySearchFilter.MailAddress, createUserResult.MailAddress);
+                    }, 5);
+
+                    if (identities.Count == 0)
+                    {
+                        Logger.LogWarning(LogDestination.File, $"Unable to add identity {identity} to the target account for batch {batchContext.BatchId}");
+                        context.InvalidIdentities.Add(identity);
+                    }
+                    else
+                    {
+                        var assignResult = await RetryHelper.RetryAsync(async () =>
+                        {
+                            return await licensingHttpClient.AssignAvailableEntitlementAsync(identities[0].Id, dontNotifyUser: true);
+                        }, 5);
+                        context.ValidatedIdentities.Add(identity);
+                    }
                 }
                 catch (Exception ex)
                 {

@@ -29,5 +29,12 @@ namespace Common.Config
 
         [JsonProperty(PropertyName = "password", Required = Required.DisallowNull)]
         public string Password { get; set; }
+
+        // used by JSON.NET to control weather or not Password gets serialized.
+        // JSON.NET just knows to apply it to Password because it’s in the method name.
+        public bool ShouldSerializePassword()
+        {
+            return false;
+        }
     }
 }
