@@ -1,13 +1,13 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
+using Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.Identity;
 using Microsoft.VisualStudio.Services.Identity.Client;
 using Microsoft.VisualStudio.Services.Security.Client;
-using Logging;
-using System.Threading.Tasks;
 
 namespace Common.Validation
 {
@@ -16,18 +16,98 @@ namespace Common.Validation
         static ILogger Logger { get; } = MigratorLogging.CreateLogger<ValidationHelpers>();
 
         //WORK_ITEM_READ has an int value of 16  
-        public const int ReadPermission = 16;
+        private const int ReadPermission = 16;
 
         //WORK_ITEM_WRITE has an int value of 32  
-        public const int WritePermission = 32;
+        private const int WritePermission = 32;
 
-        //WORK_ITEM_WRITE has an int value of 1048576  
-        public const int BypassRulesPermission = 1048576;
+        //BYPASS_RULES has an int value of 1048576  
+        private const int BypassRulesPermission = 1048576;
 
-        //WORK_ITEM_WRITE has an int value of 2097152  
-        public const int SuppressNotificationsPermission = 2097152;
+        //SUPPRESS_NOTIFICATIONS has an int value of 2097152  
+        private const int SuppressNotificationsPermission = 2097152;
 
-        public async static Task CheckConnection(WorkItemClientConnection client, string project, int requestedPermission)
+        private static readonly Guid ProjectSecurityNamespace = new Guid("52d39943-cb85-4d7f-8fa8-c6baac873819");
+
+        private static readonly Guid CssSecurityNamespace = new Guid("83e28ad4-2d72-4ceb-97b0-c7726d5502c3");
+
+        public async static Task CheckReadPermission(WorkItemClientConnection client, string project)
+        {
+            await CheckPermission(client, project, CssSecurityNamespace, ReadPermission);
+        }
+
+        public async static Task CheckBypassRulesPermission(WorkItemClientConnection client, string project)
+        {
+            try
+            {
+                var securityHttpClient = client.Connection.GetClient<SecurityHttpClient>();
+                var namespaces = await securityHttpClient.QuerySecurityNamespacesAsync(ProjectSecurityNamespace);
+                if (namespaces.SelectMany(n => n.Actions).Any(a => a.Bit == BypassRulesPermission))
+                {
+                    await CheckPermission(client, project, ProjectSecurityNamespace, BypassRulesPermission);
+                    await CheckPermission(client, project, ProjectSecurityNamespace, SuppressNotificationsPermission);
+                    Logger.LogSuccess(LogDestination.All, $"Verified {client.Connection.AuthorizedIdentity.DisplayName} has bypass rules permission in {project}");
+                    return;
+                }
+            }
+            catch (ValidationException)
+            {
+                // no op, fallback to the legacy check
+            }
+            catch (Exception e) when (e.InnerException is VssUnauthorizedException)
+            {
+                throw new ValidationException(client.Connection.Uri.ToString(), (VssUnauthorizedException)e.InnerException);
+            }
+            catch (Exception e)
+            {
+                throw new ValidationException("An unexpected error occurred while validating project permissions", e);
+            }
+
+            // granular permissions not available, or the check failed.  falling back to legacy PCA check
+            await CheckLegacyBypassRulesPermission(client, project);
+        }
+
+        /// <summary>
+        /// Permission check for bypass rules for TFS < 2018 which only used project collection administrator to 
+        /// check if you could bypass rules
+        /// </summary>
+        private static async Task CheckLegacyBypassRulesPermission(WorkItemClientConnection client, string project)
+        {
+            IdentityHttpClient targetIdentityClient = null;
+            var currentUserIdentity = client.Connection.AuthorizedIdentity;
+            IdentityDescriptor adminId = null;
+            Logger.LogInformation($"Checking administrative permissions for {client.Connection.AuthorizedIdentity.DisplayName} in {project}");
+            try
+            {
+                targetIdentityClient = client.Connection.GetClient<IdentityHttpClient>();
+
+                var targetIdentity = (await targetIdentityClient.ReadIdentitiesAsync(IdentitySearchFilter.General, "Project Collection Administrators", queryMembership: QueryMembership.Expanded)).FirstOrDefault();
+                if (targetIdentity != null)
+                {
+                    //Check if the current user account running the tool is a member of project collection administrators 
+                    adminId = targetIdentity.Members.Where(a => string.Equals(a.Identifier, currentUserIdentity.Descriptor.Identifier, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                }
+            }
+            catch (Exception e) when (e.InnerException is VssUnauthorizedException)
+            {
+                throw new ValidationException(client.Connection.Uri.ToString(), (VssUnauthorizedException)e.InnerException);
+            }
+            catch (Exception e)
+            {
+                throw new ValidationException("An unexpected error occurred while checking administrative permissions", e);
+            }
+
+            if (adminId != null)
+            {
+                Logger.LogSuccess(LogDestination.All, $"Verified {client.Connection.AuthorizedIdentity.DisplayName} is a Project Collection Administrator in {project}");
+            }
+            else
+            {
+                throw new ValidationException($"{currentUserIdentity.Descriptor.Identifier} is not a Project Collection Administrator in {project}. Please follow https://www.visualstudio.com/en-us/docs/setup-admin/add-administrator-tfs on how to add the account to the project collection administrators");
+            }
+        }
+
+        private async static Task CheckPermission(WorkItemClientConnection client, string project, Guid securityNamespace, int requestedPermission)
         {
             Logger.LogInformation($"Checking security permissions for {client.Connection.AuthorizedIdentity.DisplayName} in {project}");
             bool hasPermission = false;
@@ -51,19 +131,17 @@ namespace Common.Validation
             //construct the token by appending the id
             string token = $"vstfs:///Classification/Node/{result.Identifier}";
 
-            //WORK_ITEM guid is hardcoded below
-            //securityNameSpaceId for WORK_ITEM is 83e28ad4-2d72-4ceb-97b0-c7726d5502c3 
             try
             {
                 hasPermission = await securityHttpClient.HasPermissionAsync(
-                    new Guid("83e28ad4-2d72-4ceb-97b0-c7726d5502c3"),
+                    securityNamespace,
                     token,
                     requestedPermission,
                     false);
             }
             catch (Exception e)
             {
-                throw new ValidationException($"An unexpected error occurred while trying to check permissions for project {project}", e);
+                throw new ValidationException($"An unexpected error occurred while trying to check permissions for project {project} in namespace {securityNamespace}", e);
             }
 
             if (hasPermission)
@@ -72,48 +150,7 @@ namespace Common.Validation
             }
             else
             {
-                throw new ValidationException($"You do not have the necessary security permissions for {project}, work item {(requestedPermission == WritePermission ? "write" : "read")} permissions are required.");
-            }
-        }
-
-        public async static Task CheckIdentity(WorkItemClientConnection client, string project)
-        {
-            IdentityHttpClient targetIdentityClient = null;
-            var currentUserIdentity = client.Connection.AuthorizedIdentity;
-            IdentityDescriptor adminId = null;
-            Logger.LogInformation($"Checking administrative permissions for {client.Connection.AuthorizedIdentity.DisplayName} in {project}");
-            try
-            {
-                targetIdentityClient = client.Connection.GetClient<IdentityHttpClient>();
-
-                var targetIdentity = (await targetIdentityClient.ReadIdentitiesAsync(IdentitySearchFilter.General, "Project Collection Administrators", queryMembership: QueryMembership.Expanded)).FirstOrDefault();
-                if (targetIdentity != null)
-                {
-                    //Check if the current user account running the tool is a member of project collection administrators 
-                    #region HackRegion
-                    adminId = targetIdentity.Members.Where(a => string.Equals(a.Identifier, currentUserIdentity.Descriptor.Identifier, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
-                    //We can replace the above code with the following two statements when they work
-                    //var me = targetIdentityClient.GetIdentitySelfAsync().Result;
-                    //var isMember = targetIdentityClient.IsMember(targetIdentity.Descriptor, currentUserIdentity.Descriptor).Result; 
-                    #endregion
-                }
-            }
-            catch (Exception e) when (e.InnerException is VssUnauthorizedException)
-            {
-                throw new ValidationException(client.Connection.Uri.ToString(), (VssUnauthorizedException)e.InnerException);
-            }
-            catch (Exception e)
-            {
-                throw new ValidationException("An unexpected error occurred while checking administrative permissions", e);
-            }
-
-            if (adminId != null)
-            {
-                Logger.LogSuccess(LogDestination.All, $"Verified {client.Connection.AuthorizedIdentity.DisplayName} is a Project Collection Administrator in {project}");
-            }
-            else
-            {
-                throw new ValidationException($"{currentUserIdentity.Descriptor.Identifier} is not a Project Collection Administrator in {project}. Please follow https://www.visualstudio.com/en-us/docs/setup-admin/add-administrator-tfs on how to add the account to the project collection administrators");
+                throw new ValidationException($"You do not have the necessary security permissions for {project}, work item permission: {requestedPermission} is required.");
             }
         }
     }

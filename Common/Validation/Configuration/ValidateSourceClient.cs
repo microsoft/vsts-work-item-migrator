@@ -19,17 +19,13 @@ namespace Common.Validation
             if (String.IsNullOrEmpty(context.Config.SourcePostMoveTag))
             {
                 Logger.LogInformation(LogDestination.File, "Checking read permissions on the source project");
-                
-                await ValidationHelpers.CheckConnection(context.SourceClient, context.Config.SourceConnection.Project, ValidationHelpers.ReadPermission);
+
+                await ValidationHelpers.CheckReadPermission(context.SourceClient, context.Config.SourceConnection.Project);
             }
             else
             {
                 Logger.LogInformation(LogDestination.File, "source-post-move-tag is specified, checking write permissions on the source project");
-                
-                await ValidationHelpers.CheckConnection(context.SourceClient, context.Config.SourceConnection.Project, ValidationHelpers.WritePermission);
-                await ValidationHelpers.CheckConnection(context.SourceClient, context.Config.SourceConnection.Project, ValidationHelpers.BypassRulesPermission);
-                await ValidationHelpers.CheckConnection(context.SourceClient, context.Config.SourceConnection.Project, ValidationHelpers.SuppressNotificationsPermission);
-                //await ValidationHelpers.CheckIdentity(context.SourceClient, context.Config.SourceConnection.Project);
+                await ValidationHelpers.CheckBypassRulesPermission(context.SourceClient, context.Config.SourceConnection.Project);
             }
         }
     }
