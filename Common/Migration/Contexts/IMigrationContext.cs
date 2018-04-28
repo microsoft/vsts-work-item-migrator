@@ -6,18 +6,8 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
 namespace Common.Migration
 {
-    public interface IMigrationContext
+    public interface IMigrationContext : IContext
     {
-        ConfigJson Config { get; }
-
-        WorkItemClientConnection SourceClient { get; }
-
-        WorkItemClientConnection TargetClient { get; }
-
-        ConcurrentDictionary<int, string> WorkItemIdsUris { get; set; }
-
-        ConcurrentBag<WorkItemMigrationState> WorkItemsMigrationState { get; set; }
-
         ConcurrentDictionary<int, int> SourceToTargetIds { get; set; }
 
         //Mapping of targetId of a work item to attribute id of the hyperlink

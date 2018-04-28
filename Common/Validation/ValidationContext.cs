@@ -24,7 +24,8 @@ namespace Common.Validation
         public WorkItemClientConnection TargetClient { get; }
 
         public ConcurrentDictionary<int, string> WorkItemIdsUris { get; set; }
-        public ConcurrentBag<WorkItemMigrationState> WorkItemsMigrationState { get; private set; } = new ConcurrentBag<WorkItemMigrationState>();
+
+        public ConcurrentBag<WorkItemMigrationState> WorkItemsMigrationState { get; set; } = new ConcurrentBag<WorkItemMigrationState>();
 
         //Mapping of targetId of a work item to attribute id of the hyperlink
         public ConcurrentDictionary<int, Int64> TargetIdToSourceHyperlinkAttributeId { get; set; } = new ConcurrentDictionary<int, Int64>();
