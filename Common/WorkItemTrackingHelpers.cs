@@ -220,7 +220,7 @@ namespace Common
                     return await client.QueryByWiqlAsync(wiql, project: project, top: queryPageSize);
                 }, 5);
 
-                workItemIdsUris.AddRange(queryResult.WorkItems.Where(w => !workItemIdsUris.ContainsKey(w.Id)).ToDictionary(k => k.Id, v => v.Url));
+                workItemIdsUris.AddRange(queryResult.WorkItems.Where(w => !workItemIdsUris.ContainsKey(w.Id)).ToDictionary(k => k.Id, v => RemoveProjectGuidFromUrl(v.Url)));
 
                 Logger.LogTrace(LogDestination.File, $"Getting work item ids page {page} with last id {id} for {client.BaseAddress.Host} returned {queryResult.WorkItems.Count()} results and total result count is {workItemIdsUris.Count}");
                 
@@ -288,6 +288,17 @@ namespace Common
             }
 
             return $"{query}{clause}";
+        }
+
+        /// <summary>
+        /// In M133 the work item URL format changed to include project.  This breaks
+        /// vsts-work-item-migrator so for now stripping out the project from the URL
+        /// since the collection scoped URL is still valid.
+        /// </summary>
+        private static string RemoveProjectGuidFromUrl(string url)
+        {
+            var parts = url.Split("/", StringSplitOptions.None);
+            return string.Join("/", parts.Where(p => !Guid.TryParse(p, out Guid _)));
         }
 
         public async static Task<WorkItemClassificationNode> GetClassificationNode(WorkItemTrackingHttpClient client, string project, TreeStructureGroup structureGroup)
