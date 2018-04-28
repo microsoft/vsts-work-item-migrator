@@ -6,20 +6,8 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
 namespace Common.Validation
 {
-    public interface IValidationContext
+    public interface IValidationContext : IContext
     {
-        ConfigJson Config { get; }
-
-        WorkItemClientConnection SourceClient { get; }
-
-        WorkItemClientConnection TargetClient { get; }
-
-        //Mapping of source work items to their url on the source
-        ConcurrentDictionary<int, string> WorkItemIdsUris { get; set; }
-
-        //State of all work items to migrate
-        ConcurrentBag<WorkItemMigrationState> WorkItemsMigrationState { get; }
-
         //Mapping of targetId of a work item to attribute id of the hyperlink
         ConcurrentDictionary<int, Int64> TargetIdToSourceHyperlinkAttributeId { get; set; }
 
