@@ -1,23 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Common.Config;
 
 namespace Common
 {
     public static class DictionaryExtensions
     {
-        public static bool ContainsKeyIgnoringCase(this IDictionary<string, object> dictionary, string desiredKeyOfAnyCase)
+        public static bool ContainsKeyIgnoringCase<T>(this IDictionary<string, T> dictionary, string desiredKeyOfAnyCase)
         {
             return GetKeyIgnoringCase(dictionary, desiredKeyOfAnyCase) != null;
         }
 
-        public static string GetKeyIgnoringCase(this IDictionary<string, object> dictionary, string desiredKeyOfAnyCase)
+        public static string GetKeyIgnoringCase<T>(this IDictionary<string, T> dictionary, string desiredKeyOfAnyCase)
         {
             return dictionary.FirstOrDefault(a => a.Key.Equals(desiredKeyOfAnyCase, StringComparison.OrdinalIgnoreCase)).Key;
         }
 
-        public static bool TryGetValueIgnoringCase(this IDictionary<string, object> dictionary, string desiredKeyOfAnyCase, out object value)
+        public static bool TryGetValueIgnoringCase<T>(this IDictionary<string, T> dictionary, string desiredKeyOfAnyCase, out T value) 
         {
             var key = GetKeyIgnoringCase(dictionary, desiredKeyOfAnyCase);
             if (key != null)
@@ -26,32 +25,16 @@ namespace Common
             }
             else
             {
-                value = null;
+                value = default(T);
                 return false;
             }
         }
 
-        public static bool ContainsKeyIgnoringCase(this IDictionary<string, TargetFieldMap> dictionary, string desiredKeyOfAnyCase)
+        public static void AddRange<T>(this IDictionary<string, T> dictionary, IDictionary<string, T> entries)
         {
-            return GetKeyIgnoringCase(dictionary, desiredKeyOfAnyCase) != null;
-        }
-
-        public static string GetKeyIgnoringCase(this IDictionary<string, TargetFieldMap> dictionary, string desiredKeyOfAnyCase)
-        {
-            return dictionary.FirstOrDefault(a => a.Key.Equals(desiredKeyOfAnyCase, StringComparison.OrdinalIgnoreCase)).Key;
-        }
-
-        public static bool TryGetValueIgnoringCase(this IDictionary<string, TargetFieldMap> dictionary, string desiredKeyOfAnyCase, out TargetFieldMap value)
-        {
-            var key = GetKeyIgnoringCase(dictionary, desiredKeyOfAnyCase);
-            if (key != null)
+            foreach (var entry in entries)
             {
-                return dictionary.TryGetValue(key, out value);
-            }
-            else
-            {
-                value = null;
-                return false;
+                dictionary[entry.Key] = entry.Value;
             }
         }
     }

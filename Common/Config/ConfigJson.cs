@@ -99,7 +99,10 @@ namespace Common.Config
         public LogLevel LogLevelForFile { get; set; }
 
         [JsonProperty(PropertyName = "field-replacements", DefaultValueHandling = DefaultValueHandling.Populate)]
-        public Dictionary<string, TargetFieldMap> FieldReplacements { get; set; }
+        public FieldReplacements FieldReplacements { get; set; }
+
+        [JsonProperty(PropertyName = "type-mapping", DefaultValueHandling = DefaultValueHandling.Populate)]
+        public Dictionary<string, TypeMapping> TypeMapping { get; set; }
 
         [JsonProperty(PropertyName = "send-email-notification", DefaultValueHandling = DefaultValueHandling.Populate)]
         [DefaultValue(false)]

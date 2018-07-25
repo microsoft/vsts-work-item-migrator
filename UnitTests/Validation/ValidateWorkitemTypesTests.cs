@@ -30,7 +30,7 @@ namespace UnitTests.Validation
             context.TargetFields.TryAdd("System.Title", new WorkItemField() { ReferenceName = "System.Title", Type = FieldType.String });
 
             ValidateWorkItemTypes instance = new ValidateWorkItemTypes();
-            bool actual = instance.CompareWorkItemType(context, "Bug", sourceFields, targetFields);
+            bool actual = instance.CompareWorkItemTypeFields(context, "Bug", sourceFields, targetFields);
             Assert.AreEqual(expected, actual);
        }
 
@@ -55,7 +55,7 @@ namespace UnitTests.Validation
             context.TargetFields.TryAdd("System.Title", new WorkItemField() { ReferenceName = "System.Title", Type = FieldType.String });
 
             ValidateWorkItemTypes instance = new ValidateWorkItemTypes();
-            bool actual = instance.CompareWorkItemType(context, "Bug", sourceFields, targetFields);
+            bool actual = instance.CompareWorkItemTypeFields(context, "Bug", sourceFields, targetFields);
             Assert.AreEqual(expected, actual);
         }
 
@@ -79,7 +79,7 @@ namespace UnitTests.Validation
             context.TargetFields.TryAdd("System.Title", new WorkItemField() { Name = "System.Title", Type = FieldType.String });
 
             ValidateWorkItemTypes instance = new ValidateWorkItemTypes();
-            bool actual = instance.CompareWorkItemType(context, "Bug", sourceFields, targetFields);
+            bool actual = instance.CompareWorkItemTypeFields(context, "Bug", sourceFields, targetFields);
             Assert.AreEqual(expected, actual);
         }
 
@@ -102,7 +102,7 @@ namespace UnitTests.Validation
             context.TargetFields.TryAdd("System.Title", new WorkItemField() { Name = "System.Title", Type = FieldType.String });
 
             ValidateWorkItemTypes instance = new ValidateWorkItemTypes();
-            bool actual = instance.CompareWorkItemType(context, "Bug", sourceFields, targetFields);
+            bool actual = instance.CompareWorkItemTypeFields(context, "Bug", sourceFields, targetFields);
             Assert.AreEqual(expected, actual);
         }
 
@@ -119,7 +119,7 @@ namespace UnitTests.Validation
             IValidationContext context = new ValidationContext();
 
             ValidateWorkItemTypes instance = new ValidateWorkItemTypes();
-            bool actual = instance.CompareWorkItemType(context, "Bug", sourceFields, targetFields);
+            bool actual = instance.CompareWorkItemTypeFields(context, "Bug", sourceFields, targetFields);
             Assert.AreEqual(expected, actual);
         }
 
@@ -135,7 +135,7 @@ namespace UnitTests.Validation
 
             IValidationContext context = new ValidationContext();
             ValidateWorkItemTypes instance = new ValidateWorkItemTypes();
-            bool actual = instance.CompareWorkItemType(context, "Bug", sourceFields, targetFields);
+            bool actual = instance.CompareWorkItemTypeFields(context, "Bug", sourceFields, targetFields);
             Assert.AreEqual(expected, actual);
         }
     }

@@ -121,6 +121,21 @@
   // }
   "field-replacements": {
   },
+  // maps a source work item type to a target, and optionally can specify a field replacement
+  // per type.
+  //"type-mapping": {
+  //  "Bug": {
+  //    "type": "Task",
+  //    "field-replacements": {
+  //      "Microsoft.VSTS.TCM.ReproSteps": { "field-reference-name": "System.Description" }
+  //    }
+  //  }
+  //},
+  "type-mapping": {
+    "Bug": {
+      "type": "Task"
+    }
+  },
   // when true, will send a run summary email if there are details under the below specifications
   // under email-notification.
   "send-email-notification": true,

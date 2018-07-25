@@ -85,10 +85,16 @@ namespace Common.Migration
 
         protected JsonPatchDocument CreateJsonPatchDocumentFromWorkItemFields(WorkItem sourceWorkItem)
         {
-            string sourceWorkItemType = GetWorkItemTypeFromWorkItem(sourceWorkItem);
-            JsonPatchDocument jsonPatchDocument = new JsonPatchDocument();
+            var sourceWorkItemType = GetWorkItemTypeFromWorkItem(sourceWorkItem);
+            var targetWorkItemType = GetTargetWorkItemType(sourceWorkItemType);
+            var jsonPatchDocument = new JsonPatchDocument();
+            var fieldNamesAlreadyPopulated = new List<string>();
 
-            IList<string> fieldNamesAlreadyPopulated = new List<string>();
+            // if there is a mapping, override the work item type on the work item
+            if (!string.Equals(sourceWorkItemType, targetWorkItemType, StringComparison.InvariantCultureIgnoreCase))
+            {
+                sourceWorkItem.Fields[FieldNames.WorkItemType] = targetWorkItemType;
+            }
 
             foreach (var sourceField in sourceWorkItem.Fields)
             {
@@ -99,13 +105,13 @@ namespace Common.Migration
 
                 if (FieldIsWithinType(sourceField.Key, sourceWorkItemType) && !IsFieldUnsupported(sourceField.Key))
                 {
-                    KeyValuePair<string, object> fieldProcessedForConfigFields = GetTargetField(sourceField, fieldNamesAlreadyPopulated);
-                    KeyValuePair<string, object> preparedField = UpdateProjectNameIfNeededForField(sourceWorkItem, fieldProcessedForConfigFields);
+                    KeyValuePair<string, object> targetField = GetTargetField(sourceField, sourceWorkItemType, targetWorkItemType, fieldNamesAlreadyPopulated);
+                    KeyValuePair<string, object> preparedField = UpdateProjectNameIfNeededForField(sourceWorkItem, targetField);
                     
                     // TEMPORARY HACK for handling emoticons in identity fields:
                     if (this.migrationContext.Config.ClearIdentityDisplayNames)
                     {
-                        preparedField = RemoveEmojis(sourceField, preparedField);
+                        preparedField = RemoveEmojis(preparedField);
                     }
 
                     // add inline image urls
@@ -128,27 +134,39 @@ namespace Common.Migration
             return jsonPatchDocument;
         }
 
-        private KeyValuePair<string, object> GetTargetField(KeyValuePair<string, object> sourceField, IList<string> fieldNamesAlreadyPopulated)
+        private KeyValuePair<string, object> GetTargetField(KeyValuePair<string, object> sourceField, string sourceWorkItemType, string targetWorkItemType, IList<string> fieldNamesAlreadyPopulated)
         {
             KeyValuePair<string, object> newField = sourceField;
 
             string sourceFieldName = sourceField.Key;
             object sourceFieldValue = sourceField.Value;
 
-            if (migrationContext.Config.FieldReplacements != null)
+            FieldReplacements fieldReplacements = null;
+            // use the type mapping field replacement if specified
+            if (!sourceWorkItemType.Equals(targetWorkItemType, StringComparison.CurrentCultureIgnoreCase) &&
+                migrationContext.Config.TypeMapping[sourceWorkItemType].FieldReplacements != null &&
+                migrationContext.Config.TypeMapping[sourceWorkItemType].FieldReplacements.ContainsKeyIgnoringCase(sourceField.Key))
             {
-                if (migrationContext.Config.FieldReplacements.ContainsKeyIgnoringCase(sourceFieldName))
+                fieldReplacements = migrationContext.Config.TypeMapping[sourceWorkItemType].FieldReplacements;
+            }
+            // otherwise fall back to the global field replacements
+            else if (migrationContext.Config.FieldReplacements != null)
+            {
+                fieldReplacements = migrationContext.Config.FieldReplacements;
+            }
+
+            if (fieldReplacements != null &&
+                fieldReplacements.ContainsKeyIgnoringCase(sourceFieldName))
+            {
+                TargetFieldMap targetFieldMap = fieldReplacements[sourceFieldName];
+                if (targetFieldMap.Value != null)
                 {
-                    TargetFieldMap targetFieldMap = migrationContext.Config.FieldReplacements[sourceFieldName];
-                    if (targetFieldMap.Value != null)
-                    {
-                        newField = new KeyValuePair<string, object>(sourceFieldName, targetFieldMap.Value); // set targetField to value
-                    }
-                    else if (!string.IsNullOrEmpty(targetFieldMap.FieldReferenceName))
-                    {
-                        newField = new KeyValuePair<string, object>(targetFieldMap.FieldReferenceName, sourceFieldValue); // bring source value to specified target field
-                        fieldNamesAlreadyPopulated.Add(targetFieldMap.FieldReferenceName);
-                    }
+                    newField = new KeyValuePair<string, object>(sourceFieldName, targetFieldMap.Value); // set targetField to value
+                }
+                else if (!string.IsNullOrEmpty(targetFieldMap.FieldReferenceName))
+                {
+                    newField = new KeyValuePair<string, object>(targetFieldMap.FieldReferenceName, sourceFieldValue); // bring source value to specified target field
+                    fieldNamesAlreadyPopulated.Add(targetFieldMap.FieldReferenceName);
                 }
             }
 
@@ -156,13 +174,12 @@ namespace Common.Migration
         }
 
         // TEMPORARY HACK for handling emoticons in identity fields:
-        protected KeyValuePair<string, object> RemoveEmojis(KeyValuePair<string, object> sourceField, KeyValuePair<string, object> targetField)
+        protected KeyValuePair<string, object> RemoveEmojis(KeyValuePair<string, object> targetField)
         {
             if (targetField.Value is string
-                && this.migrationContext.IdentityFields.Contains(sourceField.Key))
+                && this.migrationContext.IdentityFields.Contains(targetField.Key))
             {
                 string targetFieldValueString = targetField.Value as string;
-
                 if (!string.IsNullOrEmpty(targetFieldValueString))
                 {
                     string fixedTargetFieldValue;
@@ -176,8 +193,7 @@ namespace Common.Migration
                         fixedTargetFieldValue = Regex.Replace(targetFieldValueString, @"[\p{C}\p{S}]*", "");
                     }
 
-                    KeyValuePair<string, object> targetFieldNoSanta = new KeyValuePair<string, object>(targetField.Key, fixedTargetFieldValue);
-                    targetField = targetFieldNoSanta;
+                    targetField = new KeyValuePair<string, object>(targetField.Key, fixedTargetFieldValue);
                 }
             }
 
@@ -313,6 +329,16 @@ namespace Common.Migration
         public string GetWorkItemTypeFromWorkItem(WorkItem sourceWorkItem)
         {
             return sourceWorkItem.Fields[FieldNames.WorkItemType] as string;
+        }
+
+        public string GetTargetWorkItemType(string sourceWorkItemType)
+        {
+            if (this.migrationContext.Config.TypeMapping.TryGetValue(sourceWorkItemType, out TypeMapping mapping))
+            {
+                return mapping.Type;
+            }
+
+            return sourceWorkItemType;
         }
 
         public JsonPatchOperation GetInsertBatchIdAddOperation()
