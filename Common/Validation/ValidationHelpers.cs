@@ -120,7 +120,6 @@ namespace Common.Validation
                 securityHttpClient = client.Connection.GetClient<SecurityHttpClient>();
                 projectHttpClient = client.Connection.GetClient<ProjectHttpClient>();
                 teamProject = await projectHttpClient.GetProject(project);
-                
             }
             catch (Exception e) when (e.InnerException is VssUnauthorizedException)
             {
