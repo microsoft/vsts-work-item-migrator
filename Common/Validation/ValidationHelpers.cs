@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Logging;
 using Microsoft.Extensions.Logging;
+using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.Identity;
@@ -33,7 +34,7 @@ namespace Common.Validation
 
         public async static Task CheckReadPermission(WorkItemClientConnection client, string project)
         {
-            await CheckPermission(client, project, CssSecurityNamespace, ReadPermission);
+            await CheckCssPermission(client, project, ReadPermission);
         }
 
         public async static Task CheckBypassRulesPermission(WorkItemClientConnection client, string project)
@@ -44,8 +45,8 @@ namespace Common.Validation
                 var namespaces = await securityHttpClient.QuerySecurityNamespacesAsync(ProjectSecurityNamespace);
                 if (namespaces.SelectMany(n => n.Actions).Any(a => a.Bit == BypassRulesPermission))
                 {
-                    await CheckPermission(client, project, ProjectSecurityNamespace, BypassRulesPermission);
-                    await CheckPermission(client, project, ProjectSecurityNamespace, SuppressNotificationsPermission);
+                    await CheckProjectPermission(client, project, BypassRulesPermission);
+                    await CheckProjectPermission(client, project, SuppressNotificationsPermission);
                     Logger.LogSuccess(LogDestination.All, $"Verified {client.Connection.AuthorizedIdentity.DisplayName} has bypass rules permission in {project}");
                     return;
                 }
@@ -107,10 +108,35 @@ namespace Common.Validation
             }
         }
 
-        private async static Task CheckPermission(WorkItemClientConnection client, string project, Guid securityNamespace, int requestedPermission)
+        private async static Task CheckProjectPermission(WorkItemClientConnection client, string project, int requestedPermission)
         {
-            Logger.LogInformation($"Checking security permissions for {client.Connection.AuthorizedIdentity.DisplayName} in {project}");
-            bool hasPermission = false;
+            Logger.LogInformation($"Checking project security permissions for {client.Connection.AuthorizedIdentity.DisplayName} in {project}");
+
+            SecurityHttpClient securityHttpClient = null;
+            ProjectHttpClient projectHttpClient = null;
+            TeamProject teamProject = null;
+            try
+            {
+                securityHttpClient = client.Connection.GetClient<SecurityHttpClient>();
+                projectHttpClient = client.Connection.GetClient<ProjectHttpClient>();
+                teamProject = await projectHttpClient.GetProject(project);
+                
+            }
+            catch (Exception e) when (e.InnerException is VssUnauthorizedException)
+            {
+                throw new ValidationException(client.Connection.Uri.ToString(), (VssUnauthorizedException)e.InnerException);
+            }
+            catch (Exception e)
+            {
+                throw new ValidationException("An unexpected error occurred while reading the classification nodes to validate project permissions", e);
+            }
+
+            await HasPermission(securityHttpClient, project, $"$PROJECT:vstfs:///Classification/TeamProject/{teamProject.Id}", ProjectSecurityNamespace, requestedPermission);
+        }
+
+        private async static Task CheckCssPermission(WorkItemClientConnection client, string project, int requestedPermission)
+        {
+            Logger.LogInformation($"Checking css security permissions for {client.Connection.AuthorizedIdentity.DisplayName} in {project}");
 
             SecurityHttpClient securityHttpClient = null;
             WorkItemClassificationNode result = null;
@@ -128,9 +154,12 @@ namespace Common.Validation
                 throw new ValidationException("An unexpected error occurred while reading the classification nodes to validate project permissions", e);
             }
 
-            //construct the token by appending the id
-            string token = $"vstfs:///Classification/Node/{result.Identifier}";
+            await HasPermission(securityHttpClient, project, $"vstfs:///Classification/Node/{result.Identifier}", CssSecurityNamespace, requestedPermission);
+        }
 
+        private async static Task HasPermission(SecurityHttpClient securityHttpClient, string project, string token, Guid securityNamespace, int requestedPermission)
+        {
+            bool hasPermission = false;
             try
             {
                 hasPermission = await securityHttpClient.HasPermissionAsync(
@@ -141,16 +170,16 @@ namespace Common.Validation
             }
             catch (Exception e)
             {
-                throw new ValidationException($"An unexpected error occurred while trying to check permissions for project {project} in namespace {securityNamespace}", e);
+                throw new ValidationException($"An unexpected error occurred while trying to check permissions for project {token} in namespace {securityNamespace}", e);
             }
 
             if (hasPermission)
             {
-                Logger.LogSuccess(LogDestination.All, $"Verified security permissions for {project} project");
+                Logger.LogSuccess(LogDestination.All, $"Verified security permissions for {token} project");
             }
             else
             {
-                throw new ValidationException($"You do not have the necessary security permissions for {project}, work item permission: {requestedPermission} is required.");
+                throw new ValidationException($"You do not have the necessary security permissions for {token}, work item permission: {requestedPermission} is required.");
             }
         }
     }
