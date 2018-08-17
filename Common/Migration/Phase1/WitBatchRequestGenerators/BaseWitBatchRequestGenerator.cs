@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Common.Config;
+using Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.WebApi.Patch;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
-using Common.Config;
-using Logging;
 
 namespace Common.Migration
 {
@@ -101,7 +101,7 @@ namespace Common.Migration
                 {
                     KeyValuePair<string, object> fieldProcessedForConfigFields = GetTargetField(sourceField, fieldNamesAlreadyPopulated);
                     KeyValuePair<string, object> preparedField = UpdateProjectNameIfNeededForField(sourceWorkItem, fieldProcessedForConfigFields);
-                    
+
                     // TEMPORARY HACK for handling emoticons in identity fields:
                     if (this.migrationContext.Config.ClearIdentityDisplayNames)
                     {
@@ -110,7 +110,7 @@ namespace Common.Migration
 
                     // add inline image urls
                     JsonPatchOperation jsonPatchOperation;
-                    if (this.migrationContext.HtmlFieldReferenceNames.Contains(preparedField.Key) 
+                    if (this.migrationContext.HtmlFieldReferenceNames.Contains(preparedField.Key)
                         && preparedField.Value is string)
                     {
                         string updatedHtmlFieldValue = GetUpdatedHtmlField((string)preparedField.Value);
@@ -232,6 +232,9 @@ namespace Common.Migration
             string targetProject = this.migrationContext.Config.TargetConnection.Project;
             string sourceProject = this.migrationContext.Config.SourceConnection.Project;
 
+            bool isAreaPathExplicit = this.migrationContext.Config.DefaultAreaPathExplicit;
+            bool isIterationPathExplicit = this.migrationContext.Config.DefaulttIteratioPathExplicit;
+
             string defaultAreaPath = string.IsNullOrEmpty(this.migrationContext.Config.DefaultAreaPath) ? targetProject : this.migrationContext.Config.DefaultAreaPath;
             string defaultIterationPath = string.IsNullOrEmpty(this.migrationContext.Config.DefaultIterationPath) ? targetProject : this.migrationContext.Config.DefaultIterationPath;
 
@@ -241,28 +244,34 @@ namespace Common.Migration
             {
                 string targetPathName = GetTargetPathName(sourceField.Value as string, sourceProject, targetProject);
 
-                if (ExistsInTargetAreaPathList(targetPathName))
+                if (ExistsInTargetAreaPathList(targetPathName) && !isAreaPathExplicit)
                 {
                     targetField = new KeyValuePair<string, object>(sourceField.Key, targetPathName);
                 }
                 else
                 {
                     targetField = new KeyValuePair<string, object>(sourceField.Key, defaultAreaPath);
-                    Logger.LogWarning(LogDestination.File, $"Could not find corresponding AreaPath: {targetPathName} on target. Assigning the AreaPath: {defaultAreaPath} on source work item with Id: {sourceWorkItem.Id}.");
+                    if (!isAreaPathExplicit)
+                    {
+                        Logger.LogWarning(LogDestination.File, $"Could not find corresponding AreaPath: {targetPathName} on target. Assigning the AreaPath: {defaultAreaPath} on source work item with Id: {sourceWorkItem.Id}.");
+                    }
                 }
             }
             else if (sourceField.Key.Equals(FieldNames.IterationPath, StringComparison.OrdinalIgnoreCase))
             {
                 string targetPathName = GetTargetPathName(sourceField.Value as string, sourceProject, targetProject);
 
-                if (ExistsInTargetIterationPathList(targetPathName))
+                if (ExistsInTargetIterationPathList(targetPathName) && !isIterationPathExplicit)
                 {
                     targetField = new KeyValuePair<string, object>(sourceField.Key, targetPathName);
                 }
                 else
                 {
                     targetField = new KeyValuePair<string, object>(sourceField.Key, defaultIterationPath);
-                    Logger.LogWarning(LogDestination.File, $"Could not find corresponding IterationPath: {targetPathName} on target. Assigning the IterationPath: {defaultIterationPath} on source work item with Id: {sourceWorkItem.Id}.");
+                    if (!isIterationPathExplicit)
+                    {
+                        Logger.LogWarning(LogDestination.File, $"Could not find corresponding IterationPath: {targetPathName} on target. Assigning the IterationPath: {defaultIterationPath} on source work item with Id: {sourceWorkItem.Id}.");
+                    }
                 }
             }
             else if (sourceField.Key.Equals(FieldNames.TeamProject, StringComparison.OrdinalIgnoreCase))

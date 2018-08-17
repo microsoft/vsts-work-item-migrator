@@ -83,8 +83,16 @@ namespace Common.Config
         [JsonProperty(PropertyName = "default-area-path", DefaultValueHandling = DefaultValueHandling.Populate)]
         public string DefaultAreaPath { get; set; }
 
+        [JsonProperty(PropertyName = "default-area-path-explicit", DefaultValueHandling = DefaultValueHandling.Populate)]
+        [DefaultValue(false)]
+        public bool DefaultAreaPathExplicit { get; set; }
+
         [JsonProperty(PropertyName = "default-iteration-path", DefaultValueHandling = DefaultValueHandling.Populate)]
         public string DefaultIterationPath { get; set; }
+
+        [JsonProperty(PropertyName = "default-iteration-path-explicit", DefaultValueHandling = DefaultValueHandling.Populate)]
+        [DefaultValue(false)]
+        public bool DefaulttIteratioPathExplicit { get; set; }
 
         [JsonProperty(PropertyName = "clear-identity-display-names", DefaultValueHandling = DefaultValueHandling.Populate)]
         [DefaultValue(false)]
