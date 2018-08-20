@@ -1,4 +1,4 @@
-{
+﻿{
   // The source account details
   "source-connection": {
     // fully qualified url for the source account
@@ -91,10 +91,18 @@
   // instead of defaulting to the root.
   // note: if skip-work-items-with-missing-area-path is true, this setting is ignored.
   "default-area-path": "contoso-project\\missing area path",
+  // explicitly set the default-area-path,
+  // if set to false, the default-area-path is only set if the source is not found
+  // if set to true, the default-area-path is always set
+  "default-area-path-explicit": true,
   // when the iteration path doesn't exist on the target project, the migrator will use this iteration path
   // instead of defaulting to the root.
   // note: if skip-work-items-with-missing-iteration-path is true, this setting is ignored.
   "default-iteration-path": "contoso-project\\missing iteration path",
+  // explicitly set the default-iteration-path
+  // if set to false, the default-iteration-path is only set if the source is not found
+  // if set to true, the default-iteration-path is always set
+  "default-iteration-path-explicit": true,
   // if the account has any identities with emojis, it's possible migration
   // will fail if the identity with an emoji has not been added to the account.
   // This setting will remove the display portion of the identity to ensure
