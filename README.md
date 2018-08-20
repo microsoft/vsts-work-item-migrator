@@ -26,8 +26,8 @@ WiMigrator is a command line tool designed with the following goals in mind:
 
 ## Running
 WiMigrator supports the following command line options:
-* -v validates that the metadata between the source and target projects is consistent 
-* -m re-runs validation and then migrates the work items 
+* --validate validates that the metadata between the source and target projects is consistent 
+* --migrate re-runs validation and then migrates the work items 
 
 Migration runs in two parts:
 * Validation
@@ -44,7 +44,7 @@ A sample configuration file is provided with documentation of all the settings
 
 Execution example:
 ```
-dotnet run -v configuration.json
+dotnet run --validate configuration.json
 ```
 
 ## Limitations:
