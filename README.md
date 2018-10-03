@@ -1,10 +1,10 @@
 # Introduction 
 WiMigrator is a command line tool designed with the following goals in mind:
-* Migrate work items from one VSTS/TFS project to another
+* Migrate work items from one Azure DevOps/TFS project to another
 * Real world example of how to use the WIT REST APIs
 * Cross platform support
 
-![Build Status](https://vsts-wit.visualstudio.com/_apis/public/build/definitions/2a08f204-c80c-4f7e-82c8-f27e28f2becd/1/badge)
+![Build Status](https://dev.azure.com/vsts-wit/_apis/public/build/definitions/2a08f204-c80c-4f7e-82c8-f27e28f2becd/1/badge)
 
 # Features
 * Migrate the latest revision of a work item or set of work items based on the provided query, including:
@@ -16,8 +16,8 @@ WiMigrator is a command line tool designed with the following goals in mind:
 
 # Getting Started
 ## Requirements
-* Source Project on **VSTS** or **TFS 2017 Update 2** or later
-* Target Project on **VSTS** or **TFS 2018** or later
+* Source Project on **Azure DevOps** or **TFS 2017 Update 2** or later
+* Target Project on **Azure DevOps** or **TFS 2018** or later
 * Personal access tokens or NTLM for authentication 
 * Project Collection Administrator permissions required on target project
 * Process metadata **should** be consistent between the processes
