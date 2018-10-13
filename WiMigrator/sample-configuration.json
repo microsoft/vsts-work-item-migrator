@@ -2,7 +2,7 @@
   // The source account details
   "source-connection": {
     // fully qualified url for the source account
-    "account": "https://fabricam.visualstudio.com/",
+    "account": "https://dev.azure.com/fabrikam",
     // the name of the project to migrate from
     "project": "fabricam-project",
     // the personal access token to use when accessing the account.
@@ -16,7 +16,7 @@
   // The target account details
   "target-connection": {
     // fully qualified url for the target account
-    "account": "https://contoso.visualstudio.com/",
+    "account": "https://dev.azure.com/contoso",
     // the name of the project to migrate to
     "project": "contoso-project",
     // the personal access token to use when accessing the account.

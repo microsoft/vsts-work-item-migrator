@@ -1,12 +1,12 @@
 ﻿using System;
-using Microsoft.Extensions.CommandLineUtils;
-using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 using Common;
+using Common.Config;
 using Common.Migration;
 using Common.Validation;
-using Common.Config;
 using Logging;
-using System.Threading.Tasks;
+using Microsoft.Extensions.CommandLineUtils;
+using Microsoft.Extensions.Logging;
 
 namespace WiMigrator
 {
@@ -36,14 +36,14 @@ namespace WiMigrator
                 " from one Visual Studio Team Services account to another.";
 
             CommandOption validate = commandLineApplication.Option(
-                "-v | --validate <configurationfilename>",
+                "--validate <configurationfilename>",
                 "Readiness check of the work item migration" +
                 " based on the configuration settings",
                 CommandOptionType.SingleValue
                 );
 
             CommandOption migrate = commandLineApplication.Option(
-                "-m | --migrate <configurationfilename>",
+                "--migrate <configurationfilename>",
                 "Migrate the work items based" +
                 " on the configuration settings",
                 CommandOptionType.SingleValue
