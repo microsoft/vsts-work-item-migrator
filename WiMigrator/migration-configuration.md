@@ -4,7 +4,7 @@
 * ```account``` fully qualified url for the source account
 * ```project``` name of the project to migrate from
 * ```access-token``` PAT to use when accessing the account.
-    * requres work item read permissions to all work items which need to be migrated.
+    * requires work item read permissions to all work items which need to be migrated.
     * note: personal access tokens require https
 * ```use-integrate-auth``` when connecting to TFS, you can use NTLM instead of an access token.
 
@@ -14,7 +14,7 @@
 * ```account``` fully qualified url for the target account
 * ```project``` name of the project to migrate to
 * ```access-token``` PAT to use when accessing the account.
-    * requres user is required to be a project collection administrator.
+    * requires user is required to be a project collection administrator.
     * note: personal access tokens require https
 * ```use-integrate-auth``` when connecting to TFS, you can use NTLM instead of an access token.
 
