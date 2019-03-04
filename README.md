@@ -39,8 +39,7 @@ Migration runs in two parts:
   * Phase 2: Attachments, links, git commit links, history, target move tag
   * Phase 3: Source move tag
 
-A sample configuration file is provided with documentation of all the settings
-* sample-configuration.json
+A [sample configuration](WiMigrator/sample-configuration.json) file is provided with [documentation](WiMigrator/migration-configuration.md) of all the settings.
 
 Execution example:
 ```

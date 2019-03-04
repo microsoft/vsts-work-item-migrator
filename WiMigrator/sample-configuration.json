@@ -1,132 +1,42 @@
 {
-  // The source account details
   "source-connection": {
-    // fully qualified url for the source account
     "account": "https://dev.azure.com/fabrikam",
-    // the name of the project to migrate from
     "project": "fabricam-project",
-    // the personal access token to use when accessing the account.
-    // this requires work item read permissions to all work items
-    // that are expected to be migrated.
-    // note: personal access tokens require https
     "access-token": "surf54m2is4yict2sdsdsdsdsdsewrcn4jolgprjmr4rjq",
-    // when connecting to TFS, you can use NTLM instead of an access token.
     "use-integrated-auth": "false"
   },
-  // The target account details
   "target-connection": {
-    // fully qualified url for the target account
     "account": "https://dev.azure.com/contoso",
-    // the name of the project to migrate to
     "project": "contoso-project",
-    // the personal access token to use when accessing the account.
-    // the user is required to be a project collection administrator.
-    // note: personal access tokens require https
     "access-token": "urf54m2is4yict2ewrhsdkshdkjsdscn4jolgprjmr4rjq",
-    // when connecting to TFS, you can use NTLM instead of an access token.
     "use-integrated-auth": "false"
   },
-  // the name of the query to use for identifying work items to migrate
-  // the query must be a flat query
   "query": "Shared Queries/Website/All Tasks",
-  // the number of seconds in between logging the migration status,
-  // which gives the user a periodic update on the number of work items
-  // that have succeeded or failed the phases of migration.
-  // the default value is 30.
   "heartbeat-frequency-in-seconds": 30,
-  // the number of work item ids to return at a time when running
-  // the query.  This should be set to 20000 for hosted accounts
-  // and 2147483647 for onpremise accounts.
   "query-page-size": 20000,
-  // the number of threads to run in parallel.  if omitted, defaults
-  // to the number of cores on the computer.
   "parallelism": 1,
-  // the maximum size in bytes that an attachment can be.
-  // if it exceeds this size, it will be skipped.
-  // the default value is 60MB
   "max-attachment-size": 62914560,
-  // the number of threads to run in parallel when processing links.
-  // if omitted, defaults to the number of cores on the computer.
   "link-parallelism": 1,
-  // the chunk size to use when uploading a work item in bytes.
-  // the default value is 1MB
   "attachment-upload-chunk-size": 1048576,
-  // when true, the migration will not attempt to update any work
-  // items that have been previously migrated.
-  // when false, it will update any previously migrated work items
-  // that have changed on the source since the migration was completed.
   "skip-existing": true,
-  // create a json file containing the updates of the source
-  // work item and attach it to the migrated work item.
   "move-history": false,
-  // the limit to the number of updates of the source work item
-  // to attach to the migrated work item.
   "move-history-limit": 200,
-  // migrate git commit links as hyperlinks that point to the
-  // web view of the commit on the source account.
   "move-git-links": false,
-  // migrate attachments
   "move-attachments": false,
-  // preserve and migrate work item links from source to target if the linked work item
-  // is part of the current query or it has been previously migrated.
   "move-links": true,
-  // the tag to stamp on the work items on the source project
-  // once the migration is complete.
   "source-post-move-tag": "6F078B6C-2A96-453B-A7C3-EACE6E63BB97",
-  // the tag to stamp on the work items on the target project
-  // once the migration is complete.
   "target-post-move-tag": "6F078B6C-2A96-453B-A7C3-EACE6E63BB97",
-  // when true, will skip the work item if it's type does not have all fields present on the target account
-  // when false, will migrate the work item using only the matching fields present on the target account
   "skip-work-items-with-type-missing-fields": false,
-  // when true, will skip the work item if the area path does not exist in the target account
-  // when false, will migrate the work item and set the area path to the project name when the area
-  // path does not exist on the target account.
   "skip-work-items-with-missing-area-path": false,
-  // when true, will skip the work item if the iteration path does not exist in the target account
-  // when false, will migrate the work item and set the iteration path to the project name when the iteration
-  // path does not exist on the target account.
   "skip-work-items-with-missing-iteration-path": false,
-  // when the area path doesn't exist on the target project, the migrator will use this area path
-  // instead of defaulting to the root.
-  // note: if skip-work-items-with-missing-area-path is true, this setting is ignored.
   "default-area-path": "contoso-project\\missing area path",
-  // when the iteration path doesn't exist on the target project, the migrator will use this iteration path
-  // instead of defaulting to the root.
-  // note: if skip-work-items-with-missing-iteration-path is true, this setting is ignored.
   "default-iteration-path": "contoso-project\\missing iteration path",
-  // if the account has any identities with emojis, it's possible migration
-  // will fail if the identity with an emoji has not been added to the account.
-  // This setting will remove the display portion of the identity to ensure
-  // migration will succeed.
   "clear-identity-display-names": false,
-  // when true, will add any identities that are referenced by work items to the account,
-  // adding them to the Licensed Users group.  This applies only to VSTS, not TFS.
-  // when false, if any identity that is referenced by the work item does not exist it will
-  // be created as a non-identity value which can cause issues for query and in the case
-  // of special characters in the name the work item will fail to be migrated.
   "ensure-identities": false,
-  // minimum log level that will be logged to the file.
-  // if omitted, defaults to information.
-  // acceptable values from lowest to highest log level: trace, debug, information, warning, error, critical.
   "log-level-for-file": "information",
-  // this can be used for 2 things.
-  // the first line in the example below shows how for a source field, we can specify the literal value that its
-  // target counterpart will contain.
-  // the second line in the example below shows how for a source field, we can specify an existing target field
-  // that will be set to its value.
-  // "field-replacements": {
-  //   "System.Title": { "value": "literalTextForSystemTitle" },
-  //   "System.Title": { "field-reference-name": "System.Tags" }
-  // }
   "field-replacements": {
   },
-  // when true, will send a run summary email if there are details under the below specifications
-  // under email-notification.
   "send-email-notification": true,
-  // this can be used to send a run summary email to one or more recipients. If used, please specify a
-  // valid smtp-server, one or more recipient-addresses, and the user-name and password if required by
-  // the smtp-server.
   "email-notification": {
     "smtp-server": "127.0.0.1",
     "use-ssl": false,
