@@ -29,7 +29,7 @@ namespace UnitTests.Migration
         public void GetInlineImageHtmlTags_ReturnsEmptyHashSetWhenAccountUrlDoesNotMatch()
         {
             string input = "In the workItemRelations api, we return link information, but do not tell them if it's a forward/reverse link, nor do we tell them what the opposite direction of the link is.<div><br></div><div>This is handy information to know so that consumers don't have to do string parsing based on if the reference name ends in -Forward/-Reverse to figure it out.</div><div><br></div><div><img src=\"https://dev.azure.com/account/WorkItemTracking/v1.0/AttachFileHandler.ashx?FileNameGuid=aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa&amp;FileName=temp1498074488622.png\" style=\"width:779.45px;\"><br>&nbsp;<br></div>";
-            IList<string> actual = MigrationHelpers.GetInlineImageHtmlTags(input, "https://dev.azure.com/account/");
+            IList<string> actual = MigrationHelpers.GetInlineImageHtmlTags(input, "https://dev.azure.com/account2/");
             Assert.IsTrue(actual.Count == 0);
         }
 
@@ -88,7 +88,7 @@ namespace UnitTests.Migration
         [TestMethod]
         public void GetInlineImageHtmlTags_ReturnsCorrectValueForOneCorrectAndOneInvalidInlineImageHtmlTags()
         {
-            string input = "In <img src=\"https://dev.azure.com/account/WorkItemTracking/v1.0/AttachFileHandler.ashx?FileNameGuid=bbbbbbbb-aaaa-aaaa-aaaa-aaaaaaaaaaaa&amp;FileName=temp1498074488622.png\" style=\"width:779.45px;\"> the workItemRelations api, we return link information, but do not tell them if it's a forward/reverse link, nor do we tell them what the opposite direction of the link is.<div><br></div><div>This is handy information to know so that consumers don't have to do string parsing based on if the reference name ends in -Forward/-Reverse to figure it out.</div><div><br></div><div><img src=\"https://dev.azure.com/account/WorkItemTracking/v1.0/AttachFileHandler.ashx?FileNameGuid=aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa&amp;FileName=temp1498074488622.png\" style=\"width:779.45px;\"><br>&nbsp;<br></div>";
+            string input = "In <img src=\"https://dev.azure.com/account/WorkItemTracking/v1.0/AttachFileHandler.ashx?FileNameGuid=bbbbbbbb-aaaa-aaaa-aaaa-aaaaaaaaaaaa&amp;FileName=temp1498074488622.png\" style=\"width:779.45px;\"> the workItemRelations api, we return link information, but do not tell them if it's a forward/reverse link, nor do we tell them what the opposite direction of the link is.<div><br></div><div>This is handy information to know so that consumers don't have to do string parsing based on if the reference name ends in -Forward/-Reverse to figure it out.</div><div><br></div><div><img src=\"https://dev.azure.com/account2/WorkItemTracking/v1.0/AttachFileHandler.ashx?FileNameGuid=aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa&amp;FileName=temp1498074488622.png\" style=\"width:779.45px;\"><br>&nbsp;<br></div>";
 
             IList<string> expected = new List<string>();
             expected.Add("<img src=\"https://dev.azure.com/account/WorkItemTracking/v1.0/AttachFileHandler.ashx?FileNameGuid=bbbbbbbb-aaaa-aaaa-aaaa-aaaaaaaaaaaa&amp;FileName=temp1498074488622.png\" style=\"width:779.45px;\">");

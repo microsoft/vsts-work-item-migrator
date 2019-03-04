@@ -28,7 +28,7 @@ namespace UnitTests.Migration.Preprocess
             var artifactLink = "vstfs:///Git/Commit/b924d696-3eae-4116-8443-9a18392d8544%2ffb240610-b309-4925-8502-65ff76312c40%2fb8b676f5ec7d5b88df15258bec81c8a2ded4a05a";
             string account = "https://dev.azure.com/account/";
             var actualHyperlink = GitCommitLinksProcessor.ConvertGitCommitLinkToHyperLink(1, artifactLink, account);
-            string expectedHyperlink = "https://dev.azure.com/account//b924d696-3eae-4116-8443-9a18392d8544/_git/fb240610-b309-4925-8502-65ff76312c40/commit/b8b676f5ec7d5b88df15258bec81c8a2ded4a05a";
+            string expectedHyperlink = "https://dev.azure.com/account/b924d696-3eae-4116-8443-9a18392d8544/_git/fb240610-b309-4925-8502-65ff76312c40/commit/b8b676f5ec7d5b88df15258bec81c8a2ded4a05a";
             Assert.AreEqual(expectedHyperlink, actualHyperlink);
         }
 
