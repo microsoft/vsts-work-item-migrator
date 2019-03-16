@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using Common.Config;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
 namespace Common.Migration

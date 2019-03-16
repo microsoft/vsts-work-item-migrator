@@ -7,25 +7,13 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
 namespace Common.Migration
 {
-    public class MigrationContext : IMigrationContext
+    public class MigrationContext : BaseContext, IMigrationContext
     {
-        public ConfigJson Config { get; }
-
-        public WorkItemClientConnection SourceClient { get; }
-
-        public WorkItemClientConnection TargetClient { get; }
-
-        public ConcurrentDictionary<int, string> WorkItemIdsUris { get; set; }
-
-        public ConcurrentBag<WorkItemMigrationState> WorkItemsMigrationState { get; set; } = new ConcurrentBag<WorkItemMigrationState>();
-
-        public ConcurrentDictionary<int, int> SourceToTargetIds { get; set; } = new ConcurrentDictionary<int, int>();
-
         //Mapping of targetId of a work item to attribute id of the hyperlink
         public ConcurrentDictionary<int, Int64> TargetIdToSourceHyperlinkAttributeId { get; set; } = new ConcurrentDictionary<int, Int64>();
 
         public ConcurrentSet<string> ValidatedWorkItemLinkRelationTypes { get; set; } 
-        
+
         public ConcurrentDictionary<string, ISet<string>> WorkItemTypes { get; set; }
 
         public ConcurrentDictionary<string, WorkItemField> SourceFields { get; set; } = new ConcurrentDictionary<string, WorkItemField>(StringComparer.CurrentCultureIgnoreCase);
@@ -73,11 +61,8 @@ namespace Common.Migration
             "System.AreaLevel7"
         });
 
-        public MigrationContext(ConfigJson configJson)
+        public MigrationContext(ConfigJson configJson) : base(configJson)
         {
-            this.Config = configJson;
-            this.SourceClient = ClientHelpers.CreateClient(configJson.SourceConnection);
-            this.TargetClient = ClientHelpers.CreateClient(configJson.TargetConnection);
         }
     }
 }

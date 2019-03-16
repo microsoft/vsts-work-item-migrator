@@ -3,29 +3,17 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
-using Microsoft.VisualStudio.Services.Common;
-using Microsoft.VisualStudio.Services.WebApi;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Common.Config;
 using Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+using Newtonsoft.Json;
 
 namespace Common.Validation
 {
-    public class ValidationContext : IValidationContext
+    public class ValidationContext : BaseContext, IValidationContext
     {
         static ILogger Logger { get; } = MigratorLogging.CreateLogger<ValidationContext>();
-
-        public ConfigJson Config { get; }
-
-        public WorkItemClientConnection SourceClient { get; }
-
-        public WorkItemClientConnection TargetClient { get; }
-
-        public ConcurrentDictionary<int, string> WorkItemIdsUris { get; set; }
-
-        public ConcurrentBag<WorkItemMigrationState> WorkItemsMigrationState { get; set; } = new ConcurrentBag<WorkItemMigrationState>();
 
         //Mapping of targetId of a work item to attribute id of the hyperlink
         public ConcurrentDictionary<int, Int64> TargetIdToSourceHyperlinkAttributeId { get; set; } = new ConcurrentDictionary<int, Int64>();
@@ -77,15 +65,11 @@ namespace Common.Validation
             FieldNames.TeamProject
         });
 
-        public ValidationContext(ConfigJson configJson)
+        public ValidationContext(ConfigJson configJson) : base(configJson)
         {
-            this.Config = configJson;
             MigratorLogging.configMinimumLogLevel = this.Config.LogLevelForFile;
 
             LogConfigData();
-
-            this.SourceClient = this.CreateValidationClient(this.Config.SourceConnection);
-            this.TargetClient = this.CreateValidationClient(this.Config.TargetConnection);
         }
 
         private void LogConfigData()
@@ -112,28 +96,7 @@ namespace Common.Validation
             }
         }
 
-        /// <summary>
-        /// Wraps the call to CreateClient, handling any specific errors that could be thrown 
-        /// around invalid PAT and account name and wraps them in a ValidationException with
-        /// a helpful message.
-        /// </summary>
-        private WorkItemClientConnection CreateValidationClient(ConfigConnection connection)
-        {
-            try
-            {
-                return ClientHelpers.CreateClient(connection);
-            }
-            catch (Exception e) when (e is VssServiceResponseException && e.Message == "The resource cannot be found.")
-            {
-                throw new ValidationException(connection.Account, (VssServiceResponseException)e);
-            }
-            catch (Exception e) when (e is VssUnauthorizedException)
-            {
-                throw new ValidationException(connection.Account, (VssUnauthorizedException)e);
-            }
-        }
-
-        public ValidationContext()
+        public ValidationContext() : base()
         {
         }
     }

@@ -16,5 +16,9 @@ namespace Common
 
         //State of all work items to migrate
         ConcurrentBag<WorkItemMigrationState> WorkItemsMigrationState { get; set; }
+
+        //remote relation types, do not need to exist on target since they're 
+        //recreated as hyperlinks
+        ConcurrentSet<string> RemoteLinkRelationTypes { get; set; }
     }
 }

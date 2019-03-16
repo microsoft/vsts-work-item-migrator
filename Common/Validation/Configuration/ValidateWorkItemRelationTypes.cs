@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
-using Logging;
 
 namespace Common.Validation
 {
@@ -27,20 +27,26 @@ namespace Common.Validation
             var sourceRelationTypes = await WorkItemTrackingHelpers.GetRelationTypesAsync(context.SourceClient.WorkItemTrackingHttpClient);
             var targetRelationTypes = await WorkItemTrackingHelpers.GetRelationTypesAsync(context.TargetClient.WorkItemTrackingHttpClient);
 
-            var targetRelationNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var relationType in sourceRelationTypes)
             {
                 //retrieve relations which are of type workitemlink defined by attribute kvp {"usage", "workitemlink"}
-                if (relationType.Attributes.ContainsKeyIgnoringCase(Constants.WorkItemLinkAttributeKey) &&
-                    String.Equals(relationType.Attributes[Constants.WorkItemLinkAttributeKey].ToString(), Constants.WorkItemLinkAttributeValue, StringComparison.OrdinalIgnoreCase))
+                //exclude remote link types because they need to be converted into hyperlinks
+                if (IsWorkItemLinkType(relationType))
                 {
-                    if (TargetHasRelationType(relationType, targetRelationTypes))
+                    if (RelationHelpers.IsRemoteLinkType(relationType))
                     {
-                        context.ValidatedWorkItemLinkRelationTypes.Add(relationType.ReferenceName);
+                        context.RemoteLinkRelationTypes.Add(relationType.ReferenceName);
                     }
                     else
                     {
-                        Logger.LogWarning(LogDestination.File, $"Target: Relation type {relationType.ReferenceName} does not exist");
+                        if (TargetHasRelationType(relationType, targetRelationTypes))
+                        {
+                            context.ValidatedWorkItemLinkRelationTypes.Add(relationType.ReferenceName);
+                        }
+                        else
+                        {
+                            Logger.LogWarning(LogDestination.File, $"Target: Relation type {relationType.ReferenceName} does not exist");
+                        }
                     }
                 }
             }
@@ -48,7 +54,13 @@ namespace Common.Validation
 
         private bool TargetHasRelationType(WorkItemRelationType relation, IList<WorkItemRelationType> targetRelationTypes)
         {
-            return targetRelationTypes.Where( a => string.Equals(relation.ReferenceName, a.ReferenceName, StringComparison.OrdinalIgnoreCase)).Any();
+            return targetRelationTypes.Where(a => string.Equals(relation.ReferenceName, a.ReferenceName, StringComparison.OrdinalIgnoreCase)).Any();
+        }
+
+        private bool IsWorkItemLinkType(WorkItemRelationType relationType)
+        {
+            return relationType.Attributes.TryGetValueOrDefaultIgnoringCase<string>(Constants.UsageAttributeKey, out var usage) &&
+                    String.Equals(relationType.Attributes[Constants.UsageAttributeKey].ToString(), Constants.UsageAttributeValue, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

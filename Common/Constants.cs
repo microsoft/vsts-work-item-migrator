@@ -25,8 +25,9 @@ namespace Common
         public const string RelationAttributeGitCommitCommentValue = "(Git Commit Link) Comment: ";
         public const string Fields = "fields";
         public const string Relations = "relations";
-        public const string WorkItemLinkAttributeKey = "usage";
-        public const string WorkItemLinkAttributeValue = "workItemLink";
+        public const string UsageAttributeKey = "usage";
+        public const string UsageAttributeValue = "workItemLink";
+        public const string RemoteLinkAttributeKey = "remote";
 
         public const string TagsFieldReferenceName = "System.Tags";
         public const string TeamProjectReferenceName = "System.TeamProject";
@@ -37,6 +38,7 @@ namespace Common
         public const string RelationPhaseGitCommitLinks = "git commit links";
         public const string RelationPhaseRevisionHistoryAttachments = "revision history attachments";
         public const string RelationPhaseWorkItemLinks = "work item links";
+        public const string RelationPhaseRemoteLinks = "remote work item links";
         public const string RelationPhaseSourcePostMoveTags = "source post move tags";
         public const string RelationPhaseTargetPostMoveTags = "target post move tags";
         
@@ -44,7 +46,8 @@ namespace Common
             RelationPhaseAttachments,
             RelationPhaseGitCommitLinks,
             RelationPhaseRevisionHistoryAttachments,
-            RelationPhaseWorkItemLinks
+            RelationPhaseWorkItemLinks,
+            RelationPhaseRemoteLinks
         });
     }
 }
