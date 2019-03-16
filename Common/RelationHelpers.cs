@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Common.Migration;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
 namespace Common
@@ -38,6 +39,16 @@ namespace Common
             }
 
             return false;
+        }
+
+        public static bool IsRemoteLinkType(WorkItemRelationType relationType)
+        {
+            return relationType.Attributes.TryGetValueOrDefaultIgnoringCase<bool>(Constants.RemoteLinkAttributeKey, out var remote) && remote;
+        }
+
+        public static bool IsRemoteLinkType(IContext context, string relationReferenceName)
+        {
+            return context.RemoteLinkRelationTypes.Contains(relationReferenceName);
         }
     }
 }

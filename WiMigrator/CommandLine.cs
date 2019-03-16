@@ -136,6 +136,7 @@ namespace WiMigrator
                 migrationContext.WorkItemsMigrationState = validatorContext.WorkItemsMigrationState;
                 migrationContext.TargetIdToSourceHyperlinkAttributeId = validatorContext.TargetIdToSourceHyperlinkAttributeId;
                 migrationContext.ValidatedWorkItemLinkRelationTypes = validatorContext.ValidatedWorkItemLinkRelationTypes;
+                migrationContext.RemoteLinkRelationTypes = validatorContext.RemoteLinkRelationTypes;
                 migrationContext.SourceFields = validatorContext.SourceFields;
                 migrationContext.FieldsThatRequireSourceProjectToBeReplacedWithTargetProject = validatorContext.FieldsThatRequireSourceProjectToBeReplacedWithTargetProject;
 

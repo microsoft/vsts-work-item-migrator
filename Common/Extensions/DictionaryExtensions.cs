@@ -31,6 +31,20 @@ namespace Common
             }
         }
 
+        public static bool TryGetValueOrDefaultIgnoringCase<V>(this IDictionary<string, object> dictionary, string key, out V value)
+        {
+            if (dictionary.TryGetValueIgnoringCase(key, out object objectValue) && objectValue is V)
+            {
+                value = (V)objectValue;
+                return true;
+            }
+            else
+            {
+                value = default;
+                return false;
+            }
+        }
+
         public static bool ContainsKeyIgnoringCase(this IDictionary<string, TargetFieldMap> dictionary, string desiredKeyOfAnyCase)
         {
             return GetKeyIgnoringCase(dictionary, desiredKeyOfAnyCase) != null;
