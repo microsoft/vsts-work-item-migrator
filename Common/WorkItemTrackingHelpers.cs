@@ -130,7 +130,7 @@ namespace Common
             // can't use the WorkItemTrackingHttpClient since it expects either a file or a stream.
             var attachmentReference = await RetryHelper.RetryAsync(async () =>
             {
-                var request = new HttpRequestMessage(HttpMethod.Post, $"{connection.Uri}_apis/wit/attachments?uploadType=chunked&api-version=3.2");
+                var request = new HttpRequestMessage(HttpMethod.Post, $"{connection.Uri}/_apis/wit/attachments?uploadType=chunked&api-version=3.2");
                 var response = await httpClient.SendAsync(request);
 
                 if (response.IsSuccessStatusCode)
@@ -163,7 +163,7 @@ namespace Common
                     content.Headers.ContentLength = chunkLength;
                     content.Headers.ContentRange = new ContentRangeHeaderValue(i * chunkSizeInBytes, i * chunkSizeInBytes + chunkLength - 1, totalNumberOfBytes);
 
-                    var chunkRequest = new HttpRequestMessage(HttpMethod.Put, $"{connection.Uri}_apis/wit/attachments/" + attachmentReference.Id + "?uploadType=chunked&api-version=3.2") { Content = content };
+                    var chunkRequest = new HttpRequestMessage(HttpMethod.Put, $"{connection.Uri}/_apis/wit/attachments/" + attachmentReference.Id + "?uploadType=chunked&api-version=3.2") { Content = content };
                     var chunkResponse = await httpClient.SendAsync(chunkRequest);
                     if (!chunkResponse.IsSuccessStatusCode)
                     {
