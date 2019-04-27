@@ -23,7 +23,7 @@ namespace Common
 
         public static WorkItemClientConnection CreateClient(ConfigConnection connection)
         {
-            Uri url = new Uri(connection.Account);
+            Uri url = new Uri(connection.Account.TrimEnd('/'));
 
             VssCredentials credentials;
             if (connection.UseIntegratedAuth)
