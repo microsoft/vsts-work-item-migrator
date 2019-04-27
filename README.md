@@ -19,7 +19,7 @@ WiMigrator is a command line tool designed with the following goals in mind:
 * Source Project on **Azure DevOps** or **TFS 2017 Update 2** or later
 * Target Project on **Azure DevOps** or **TFS 2018** or later
 * Personal access tokens or NTLM for authentication 
-* Project Collection Administrator permissions required on target project
+* Bypass rules or Project Collection Administrator permissions required on target project
 * Process metadata **should** be consistent between the processes
   * Limited field mapping support is provided to map fields from the source to target account
   * Area/Iteration paths can be defaulted to a specific value when they don't exist on the target
@@ -45,6 +45,8 @@ Execution example:
 ```
 dotnet run --validate configuration.json
 ```
+
+HOWTO [Video](https://www.youtube.com/watch?v=aHbiLYUfomc&feature=youtu.be)
 
 ## Limitations:
   * Artifact links (other than git) are not migrated
