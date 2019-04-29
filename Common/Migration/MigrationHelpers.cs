@@ -10,13 +10,16 @@ namespace Common.Migration
 {
     public static class MigrationHelpers
     {
+        private const string GuidRegex = @"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+        private static readonly string AttachmentGuidRegex = $@"((?<=FileNameGuid=)|(?<=_apis/wit/attachments/))[{GuidRegex}]*";
+
         public static HashSet<string> GetInlineImageUrlsFromField(string fieldHtmlContent, string accountUrl)
         {
             HashSet<string> result = new HashSet<string>();
 
             if (fieldHtmlContent != null)
             {
-                IList<string> inlineImageHtmlTagsForField = GetInlineImageHtmlTags(fieldHtmlContent, accountUrl);
+                var inlineImageHtmlTagsForField = GetInlineImageHtmlTags(fieldHtmlContent, accountUrl);
                 foreach (string inlineImageHtmlTag in inlineImageHtmlTagsForField)
                 {
                     result.Add(GetUrlFromHtmlTag(inlineImageHtmlTag));
@@ -26,11 +29,19 @@ namespace Common.Migration
             return result;
         }
 
-        public static IList<string> GetInlineImageHtmlTags(string input, string accountUrl)
+        public static ICollection<string> GetInlineImageHtmlTags(string input, string accountUrl)
         {
-            string pattern = $@"<img[^<>]+?src=[""']({accountUrl}WorkItemTracking/v1.0/AttachFileHandler.ashx[^""']+?)[""'][^<>]*?>";
-            MatchCollection matches = Regex.Matches(input, pattern);
-            return matches.Cast<Match>().Select(m => m.Value).ToList();
+            var inlineImageTags = new HashSet<string>();
+            var collectionPattern = $@"<img[^<>]+?src=[""']({accountUrl}/WorkItemTracking/v1.0/AttachFileHandler.ashx[^""']+?)[""'][^<>]*?>";
+            var collectionMatches = Regex.Matches(input, collectionPattern, RegexOptions.IgnoreCase);
+
+            var projectPattern = $@"<img[^<>]+?src=[""']({accountUrl}/{GuidRegex}/_apis/wit/attachments[^""']+?)[""'][^<>]*?>";
+            var projectMatches = Regex.Matches(input, projectPattern, RegexOptions.IgnoreCase);
+
+            inlineImageTags.UnionWith(collectionMatches.Select(m => m.Value));
+            inlineImageTags.UnionWith(projectMatches.Select(m => m.Value));
+
+            return inlineImageTags;
         }
 
         public static string GetUrlFromHtmlTag(string input)
@@ -42,16 +53,13 @@ namespace Common.Migration
 
         public static Guid GetAttachmentUrlGuid(string url)
         {
-            string pattern = @"(?<=FileNameGuid=)[a-zA-Z0-9-]*";
-            Match match = Regex.Match(url, pattern, RegexOptions.IgnoreCase);
-            Guid attachmentGuid;
-            return Guid.TryParse(match.Value, out attachmentGuid) ? attachmentGuid : Guid.Empty;
+            Match match = Regex.Match(url, AttachmentGuidRegex, RegexOptions.IgnoreCase);
+            return Guid.TryParse(match.Value, out Guid attachmentGuid) ? attachmentGuid : Guid.Empty;
         }
 
         public static string ReplaceAttachmentUrlGuid(string url, string newGuid)
         {
-            string pattern = @"(?<=FileNameGuid=)[a-zA-Z0-9-]*";
-            return Regex.Replace(url, pattern, newGuid, RegexOptions.IgnoreCase);
+            return Regex.Replace(url, AttachmentGuidRegex, newGuid, RegexOptions.IgnoreCase);
         }
 
         public static JsonPatchOperation GetJsonPatchOperationAddForField(KeyValuePair<string, object> field)
