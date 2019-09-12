@@ -128,6 +128,23 @@ namespace Common.Migration
             return jsonPatchDocument;
         }
 
+        private string GetTargetFieldName(string sourceFieldName)
+        {
+            if (migrationContext.Config.FieldReplacements != null)
+            {
+                if (migrationContext.Config.FieldReplacements.ContainsKeyIgnoringCase(sourceFieldName))
+                {
+                    TargetFieldMap targetFieldMap = migrationContext.Config.FieldReplacements[sourceFieldName];
+                    if (!string.IsNullOrEmpty(targetFieldMap.FieldReferenceName))
+                    {
+                        return targetFieldMap.FieldReferenceName;
+                    }
+                }
+            }
+
+            return sourceFieldName;
+        }
+
         private KeyValuePair<string, object> GetTargetField(KeyValuePair<string, object> sourceField, IList<string> fieldNamesAlreadyPopulated)
         {
             KeyValuePair<string, object> newField = sourceField;
@@ -306,8 +323,9 @@ namespace Common.Migration
         /// <returns></returns>
         public bool FieldIsWithinType(string sourceFieldName, string sourceWorkItemType)
         {
+            var targetFieldName = GetTargetFieldName(sourceFieldName);
             ISet<string> fieldsOfKey = this.migrationContext.WorkItemTypes.First(a => a.Key.Equals(sourceWorkItemType, StringComparison.OrdinalIgnoreCase)).Value;
-            return fieldsOfKey.Any(a => a.Equals(sourceFieldName, StringComparison.OrdinalIgnoreCase));
+            return fieldsOfKey.Any(a => a.Equals(targetFieldName, StringComparison.OrdinalIgnoreCase));
         }
 
         public string GetWorkItemTypeFromWorkItem(WorkItem sourceWorkItem)
