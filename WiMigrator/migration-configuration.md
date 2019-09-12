@@ -1,5 +1,5 @@
 # Source Connection
-```source-counnection``` The source account details
+```source-connection``` The source account details
 
 * ```account``` fully qualified url for the source account
 * ```project``` name of the project to migrate from

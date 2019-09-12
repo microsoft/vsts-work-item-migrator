@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Common.Config;
 using Common.Migration;
 
 namespace UnitTests.Migration
@@ -61,7 +62,10 @@ namespace UnitTests.Migration
                 "System.TeamProject"
             };
 
+            ConfigJson configJson = new ConfigJson();
+
             this.MigrationContextMock = new Mock<IMigrationContext>();
+            this.MigrationContextMock.SetupGet(a => a.Config).Returns(configJson);
             this.MigrationContextMock.SetupGet(a => a.TargetAreaPaths).Returns(TargetAreaPathList);
             this.MigrationContextMock.SetupGet(a => a.TargetIterationPaths).Returns(TargetIterationPathList);
             this.MigrationContextMock.SetupGet(a => a.WorkItemTypes).Returns(TargetWorkItemTypes);
@@ -202,6 +206,22 @@ namespace UnitTests.Migration
         {
             string fieldName = "ITEMA";
             string workItemType = "Bug";
+
+            bool result = this.BatchMigratorMock.Object.FieldIsWithinType(fieldName, workItemType);
+
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void FieldIsWithinType_ReturnsTrueWhenFieldIsReplaced()
+        {
+            string fieldName = "ITEMA";
+            string workItemType = "Bug";
+
+            this.MigrationContextMock.Object.Config.FieldReplacements = new Dictionary<string, TargetFieldMap>()
+            {
+                { "SourceITEMA", new TargetFieldMap { FieldReferenceName = "ITEMA" } }
+            };
 
             bool result = this.BatchMigratorMock.Object.FieldIsWithinType(fieldName, workItemType);
 
