@@ -94,6 +94,10 @@ namespace Common.Config
         [DefaultValue(false)]
         public bool EnsureIdentities { get; set; }
 
+        [JsonProperty(PropertyName = "include-web-link", DefaultValueHandling = DefaultValueHandling.Populate)]
+        [DefaultValue(false)]
+        public bool IncludeWebLink { get; set; }
+
         [JsonProperty(PropertyName = "log-level-for-file", DefaultValueHandling = DefaultValueHandling.Populate)]
         [DefaultValue(LogLevel.Information)]
         public LogLevel LogLevelForFile { get; set; }
