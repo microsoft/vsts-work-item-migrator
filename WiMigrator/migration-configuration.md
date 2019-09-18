@@ -19,11 +19,11 @@
 * ```use-integrate-auth``` when connecting to TFS, you can use NTLM instead of an access token.
 
 # Migration Options
-####```query``` the name of the query to use for identifying work items to migrate. Note: query must be a flat
-####```heartbeat-frequency-in-seconds``` the number of seconds in between logging the migration status. this gives the user a periodic update on the number of work items that have succeeded or failed the phases of migration. the default value is 30.
+#### ```query``` the name of the query to use for identifying work items to migrate. Note: query must be a flat
+#### ```heartbeat-frequency-in-seconds``` the number of seconds in between logging the migration status. this gives the user a periodic update on the number of work items that have succeeded or failed the phases of migration. the default value is 30.
 
 
-####```query-page-size``` the number of work item ids to return at a time when running the query.  This should be set to 20000 for hosted accounts and 2147483647 for onpremise accounts. 
+#### ```query-page-size``` the number of work item ids to return at a time when running the query.  This should be set to 20000 for hosted accounts and 2147483647 for onpremise accounts. 
 
 #### ```parallelism``` the number of threads to run in parallel.  if omitted, defaults to the number of cores on the computer.
 
@@ -63,6 +63,8 @@
 #### ```clear-identity-display-names``` if the account has any identities with emojis, it's possible migration will fail if the identity with an emoji has not been added to the account. This setting will remove the display portion of the identity to ensure migration will succeed.
 
 #### ```ensure-identities``` when true, will add any identities that are referenced by work items to the account, adding them to the Licensed Users group.  This applies only to VSTS, not TFS. when false, if any identity that is referenced by the work item does not exist it will be created as a non-identity value which can cause issues for query and in the case of special characters in the name the work item will fail to be migrated.
+
+#### ```include-web-link``` when true, will include the web link in addition to the REST link for the source work item on the target.
 
 #### ```log-level-for-file``` minimum log level that will be logged to the file. if omitted, defaults to information. acceptable values from lowest to highest log level: trace, debug, information, warning, error, critical.
 

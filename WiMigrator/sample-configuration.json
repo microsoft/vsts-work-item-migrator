@@ -33,6 +33,7 @@
   "default-iteration-path": "contoso-project\\missing iteration path",
   "clear-identity-display-names": false,
   "ensure-identities": false,
+  "include-web-link": true,
   "log-level-for-file": "information",
   "field-replacements": {
   },
