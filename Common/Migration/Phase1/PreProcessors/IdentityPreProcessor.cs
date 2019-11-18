@@ -44,7 +44,7 @@ namespace Common.Migration
         {
             object identityObject = null;
             string identityValue = null;
-            HashSet<string> identitiesToProcess = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            HashSet<string> identitiesToProcess = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var sourceWorkItem in batchContext.SourceWorkItems)
             {
