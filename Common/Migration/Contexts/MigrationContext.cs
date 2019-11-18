@@ -16,11 +16,11 @@ namespace Common.Migration
 
         public ConcurrentDictionary<string, ISet<string>> WorkItemTypes { get; set; }
 
-        public ConcurrentDictionary<string, WorkItemField> SourceFields { get; set; } = new ConcurrentDictionary<string, WorkItemField>(StringComparer.CurrentCultureIgnoreCase);
+        public ConcurrentDictionary<string, WorkItemField> SourceFields { get; set; } = new ConcurrentDictionary<string, WorkItemField>(StringComparer.OrdinalIgnoreCase);
 
         public ConcurrentDictionary<int, string> SourceToTags { get; set; } = new ConcurrentDictionary<int, string>();
 
-        public ISet<string> HtmlFieldReferenceNames { get; set; } = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+        public ISet<string> HtmlFieldReferenceNames { get; set; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         public ISet<string> TargetAreaPaths { get; set; }
 
@@ -28,9 +28,9 @@ namespace Common.Migration
 
         public ISet<string> IdentityFields { get; set; }
 
-        public ConcurrentSet<string> ValidatedIdentities { get; set; } = new ConcurrentSet<string>(StringComparer.CurrentCultureIgnoreCase);
+        public ConcurrentSet<string> ValidatedIdentities { get; set; } = new ConcurrentSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        public ConcurrentSet<string> InvalidIdentities { get; set; } = new ConcurrentSet<string>(StringComparer.CurrentCultureIgnoreCase);
+        public ConcurrentSet<string> InvalidIdentities { get; set; } = new ConcurrentSet<string>(StringComparer.OrdinalIgnoreCase);
 
         public IList<string> UnsupportedFields => unsupportedFields;
 

@@ -18,41 +18,41 @@ namespace Common.Validation
         //Mapping of targetId of a work item to attribute id of the hyperlink
         public ConcurrentDictionary<int, Int64> TargetIdToSourceHyperlinkAttributeId { get; set; } = new ConcurrentDictionary<int, Int64>();
 
-        public ISet<string> RequestedFields { get; } = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+        public ISet<string> RequestedFields { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         public ConcurrentDictionary<int, int> SourceWorkItemRevision { get; set; } = new ConcurrentDictionary<int, int>();
 
-        public ConcurrentDictionary<string, WorkItemField> SourceFields { get; set; } = new ConcurrentDictionary<string, WorkItemField>(StringComparer.CurrentCultureIgnoreCase);
+        public ConcurrentDictionary<string, WorkItemField> SourceFields { get; set; } = new ConcurrentDictionary<string, WorkItemField>(StringComparer.OrdinalIgnoreCase);
 
-        public ConcurrentDictionary<string, WorkItemField> TargetFields { get; set; } = new ConcurrentDictionary<string, WorkItemField>(StringComparer.CurrentCultureIgnoreCase);
+        public ConcurrentDictionary<string, WorkItemField> TargetFields { get; set; } = new ConcurrentDictionary<string, WorkItemField>(StringComparer.OrdinalIgnoreCase);
 
-        public ConcurrentDictionary<string, ISet<string>> SourceTypesAndFields { get; } = new ConcurrentDictionary<string, ISet<string>>(StringComparer.CurrentCultureIgnoreCase);
+        public ConcurrentDictionary<string, ISet<string>> SourceTypesAndFields { get; } = new ConcurrentDictionary<string, ISet<string>>(StringComparer.OrdinalIgnoreCase);
 
-        public ConcurrentDictionary<string, ISet<string>> TargetTypesAndFields { get; } = new ConcurrentDictionary<string, ISet<string>>(StringComparer.CurrentCultureIgnoreCase);
+        public ConcurrentDictionary<string, ISet<string>> TargetTypesAndFields { get; } = new ConcurrentDictionary<string, ISet<string>>(StringComparer.OrdinalIgnoreCase);
 
-        public ConcurrentSet<string> ValidatedTypes { get; } = new ConcurrentSet<string>(StringComparer.CurrentCultureIgnoreCase);
+        public ConcurrentSet<string> ValidatedTypes { get; } = new ConcurrentSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        public ConcurrentSet<string> ValidatedFields { get; } = new ConcurrentSet<string>(StringComparer.CurrentCultureIgnoreCase);
+        public ConcurrentSet<string> ValidatedFields { get; } = new ConcurrentSet<string>(StringComparer.OrdinalIgnoreCase);
 
         public ISet<string> IdentityFields { get; set; }
 
-        public ConcurrentSet<string> SkippedTypes { get; } = new ConcurrentSet<string>(StringComparer.CurrentCultureIgnoreCase);
+        public ConcurrentSet<string> SkippedTypes { get; } = new ConcurrentSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        public ConcurrentSet<string> SkippedFields { get; } = new ConcurrentSet<string>(StringComparer.CurrentCultureIgnoreCase);
+        public ConcurrentSet<string> SkippedFields { get; } = new ConcurrentSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        public ISet<string> TargetAreaPaths { get; set; } = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+        public ISet<string> TargetAreaPaths { get; set; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        public ISet<string> TargetIterationPaths { get; set; } = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+        public ISet<string> TargetIterationPaths { get; set; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        public ConcurrentSet<string> ValidatedAreaPaths { get; set; } = new ConcurrentSet<string>(StringComparer.CurrentCultureIgnoreCase);
+        public ConcurrentSet<string> ValidatedAreaPaths { get; set; } = new ConcurrentSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        public ConcurrentSet<string> SkippedAreaPaths { get; set; } = new ConcurrentSet<string>(StringComparer.CurrentCultureIgnoreCase);
+        public ConcurrentSet<string> SkippedAreaPaths { get; set; } = new ConcurrentSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        public ConcurrentSet<string> ValidatedIterationPaths { get; set; } = new ConcurrentSet<string>(StringComparer.CurrentCultureIgnoreCase);
+        public ConcurrentSet<string> ValidatedIterationPaths { get; set; } = new ConcurrentSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        public ConcurrentSet<string> SkippedIterationPaths { get; set; } = new ConcurrentSet<string>(StringComparer.CurrentCultureIgnoreCase);
+        public ConcurrentSet<string> SkippedIterationPaths { get; set; } = new ConcurrentSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        public ConcurrentSet<string> ValidatedWorkItemLinkRelationTypes { get; set; } = new ConcurrentSet<string>(StringComparer.CurrentCultureIgnoreCase);
+        public ConcurrentSet<string> ValidatedWorkItemLinkRelationTypes { get; set; } = new ConcurrentSet<string>(StringComparer.OrdinalIgnoreCase);
 
         public ConcurrentSet<int> SkippedWorkItems { get; } = new ConcurrentSet<int>();
 

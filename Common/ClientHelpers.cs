@@ -79,7 +79,7 @@ namespace Common
 
         public static IEnumerable<T> GetInstances<T>()
         {
-            var commonAssemblyName = DependencyContext.Default.GetDefaultAssemblyNames().Where(a => a.Name.Equals("Common", StringComparison.CurrentCultureIgnoreCase)).First();
+            var commonAssemblyName = DependencyContext.Default.GetDefaultAssemblyNames().Where(a => a.Name.Equals("Common", StringComparison.OrdinalIgnoreCase)).First();
             var commonAssembly = Assembly.Load(commonAssemblyName);
 
             return commonAssembly.GetExportedTypes().Where(a => !a.GetTypeInfo().IsAbstract && a.GetConstructor(Type.EmptyTypes) != null && !a.GetConstructor(Type.EmptyTypes).ContainsGenericParameters)
