@@ -16,7 +16,7 @@ namespace Common
         public enum State { Create, Existing, Error }
 
         [Flags]
-        public enum RequirementForExisting { None, UpdatePhase1, UpdatePhase2 }
+        public enum RequirementForExisting { None, UpdatePhase1, UpdatePhase2, UpdateChangedDate=4 }
         [Flags]
         public enum MigrationCompletionStatus { None, Phase1, Phase2, Phase3 }
         public RevAndPhaseStatus RevAndPhaseStatus { get; set; }
