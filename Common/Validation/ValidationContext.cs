@@ -22,8 +22,10 @@ namespace Common.Validation
 
         public ConcurrentDictionary<int, int> SourceWorkItemRevision { get; set; } = new ConcurrentDictionary<int, int>();
 
-        public ConcurrentDictionary<string, WorkItemField> SourceFields { get; set; } = new ConcurrentDictionary<string, WorkItemField>(StringComparer.OrdinalIgnoreCase);
+        public ConcurrentDictionary<int, String> SourceWorkItemIterationPath { get; set; } = new ConcurrentDictionary<int, string>();
 
+        public ConcurrentDictionary<string, WorkItemField> SourceFields { get; set; } = new ConcurrentDictionary<string, WorkItemField>(StringComparer.OrdinalIgnoreCase);
+        
         public ConcurrentDictionary<string, WorkItemField> TargetFields { get; set; } = new ConcurrentDictionary<string, WorkItemField>(StringComparer.OrdinalIgnoreCase);
 
         public ConcurrentDictionary<string, ISet<string>> SourceTypesAndFields { get; } = new ConcurrentDictionary<string, ISet<string>>(StringComparer.OrdinalIgnoreCase);

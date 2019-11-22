@@ -56,6 +56,8 @@
 
 #### ```skip-work-items-with-missing-iteration-path``` when true, will skip the work item if the iteration path does not exist in the target account when false, will migrate the work item and set the iteration path to the project name when the iteration path does not exist on the target account.
 
+#### ```update-work-items-with-different-iteration-path``` when true, will update the iteration-path on the target work item if it's different than the source
+
 #### ```default-area-path``` when the area path doesn't exist on the target project, the migrator will use this area path instead of defaulting to the root. note: if skip-work-items-with-missing-area-path is true, this setting is ignored.
 
 #### ```default-iteration-path``` when the iteration path doesn't exist on the target project, the migrator will use this iteration path instead of defaulting to the root. note: if skip-work-items-with-missing-iteration-path is true, this setting is ignored.
