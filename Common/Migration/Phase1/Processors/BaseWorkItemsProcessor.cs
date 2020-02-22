@@ -47,7 +47,7 @@ namespace Common.Migration
                     else
                     {
                         await WorkItemTrackingHelpers.CreateAreaPathAsync(context.TargetClient.WorkItemTrackingHttpClient, context.Config.TargetConnection.Project, areaPath);
-                        Logger.LogInformation(LogDestination.All, $"[Created] {areaPath}.");
+                        Logger.LogSuccess(LogDestination.All, $"[Created] {areaPath}.");
                     }
                 }
 
@@ -71,7 +71,7 @@ namespace Common.Migration
                     else
                     {
                         await WorkItemTrackingHelpers.CreateIterationAsync(context.TargetClient.WorkItemTrackingHttpClient, context.Config.TargetConnection.Project, it.Item1.Split("\\").Last(), (DateTime)it.Item2.Attributes["startDate"], (DateTime)it.Item2.Attributes["finishDate"]);
-                        Logger.LogInformation(LogDestination.All, $"[Created] {iteration}.");
+                        Logger.LogSuccess(LogDestination.All, $"[Created] {iteration}.");
                     }
                 }
 
