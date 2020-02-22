@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,8 +26,54 @@ namespace Common.Migration
 
         public abstract BaseWitBatchRequestGenerator GetWitBatchRequestGenerator(IMigrationContext context, IBatchMigrationContext batchContext);
 
+        public async Task ProcessNodes(IMigrationContext context)
+        {
+            await Migrator.ReadSourceNodes(context, context.Config.SourceConnection.Project);
+            await Migrator.ReadTargetNodes(context, context.Config.TargetConnection.Project);
+
+            #region Process area paths ..
+            Logger.LogInformation(LogDestination.All, $"Identified {context.SourceAreaAndIterationTree.AreaPathList.Count} area paths in source project.");
+
+            foreach (var areaPath in context.SourceAreaAndIterationTree.AreaPathList)
+            {
+                if (context.TargetAreaAndIterationTree.AreaPathList.Any(p => p.Item1 == areaPath.Item1))
+                {
+                    Logger.LogInformation(LogDestination.All, $"[Exists] {areaPath}.");
+                }
+                else
+                {
+                    await WorkItemTrackingHelpers.CreateAreaPathAsync(context.TargetClient.WorkItemTrackingHttpClient, context.Config.TargetConnection.Project, areaPath.Item1);
+                    Logger.LogInformation(LogDestination.All, $"[Created] {areaPath}.");
+                }
+            }
+
+            Logger.LogInformation(LogDestination.All, $"Area paths synchronized.");
+            #endregion
+
+            #region Process iterations ..
+            Logger.LogInformation(LogDestination.All, $"Identified {context.SourceAreaAndIterationTree.AreaPathList.Count} iterations in source project.");
+
+            foreach (var iteration in context.SourceAreaAndIterationTree.IterationPathList)
+            {
+                if (context.TargetAreaAndIterationTree.IterationPathList.Any(i => i.Item1 == iteration.Item1))
+                {
+                    Logger.LogInformation(LogDestination.All, $"[Exists] {iteration}.");
+                }
+                else
+                {
+                    await WorkItemTrackingHelpers.CreateIterationAsync(context.TargetClient.WorkItemTrackingHttpClient, context.Config.TargetConnection.Project, iteration.Item1, (DateTime)iteration.Item2.Attributes["startDate"], (DateTime)iteration.Item2.Attributes["endDate"]);
+                    Logger.LogInformation(LogDestination.All, $"[Created] {iteration}.");
+                }
+            }
+
+            Logger.LogInformation(LogDestination.All, $"Iterations synchronized.");
+            #endregion
+        }
+
         public async Task Process(IMigrationContext context)
         {
+            await ProcessNodes(context);
+
             var workItemsAndStateToMigrate = this.GetWorkItemsAndStateToMigrate(context);
             var totalNumberOfBatches = ClientHelpers.GetBatchCount(workItemsAndStateToMigrate.Count, Constants.BatchSize);
 

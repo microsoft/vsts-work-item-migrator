@@ -182,6 +182,37 @@ namespace Common
             return attachmentReference;
         }
 
+        public async static Task<WorkItemClassificationNode> CreateAreaPathAsync(WorkItemTrackingHttpClient client, string projectId, string areaPath)
+        {
+            return await RetryHelper.RetryAsync(async () =>
+            {
+                return await client.CreateOrUpdateClassificationNodeAsync(new WorkItemClassificationNode()
+                {
+                    Name = areaPath,
+                    StructureType = TreeNodeStructureType.Area,
+
+                }, projectId, TreeStructureGroup.Areas, areaPath);
+            }, 5);
+        }
+
+        public async static Task<WorkItemClassificationNode> CreateIterationAsync(WorkItemTrackingHttpClient client, string projectId, string iteration, DateTime startDate, DateTime endDate)
+        {
+            return await RetryHelper.RetryAsync(async () =>
+            {
+                return await client.CreateOrUpdateClassificationNodeAsync(new WorkItemClassificationNode()
+                {
+                    Name = iteration,
+                    StructureType = TreeNodeStructureType.Iteration,
+                    Attributes = new Dictionary<string, object>()
+                    {
+                        {"startDate", startDate },
+                        {"endDate", endDate },
+                    }
+
+                }, projectId, TreeStructureGroup.Iterations);
+            }, 5);
+        }
+
         public async static Task<Stream> GetAttachmentAsync(WorkItemTrackingHttpClient client, Guid id)
         {
             return await RetryHelper.RetryAsync(async () =>

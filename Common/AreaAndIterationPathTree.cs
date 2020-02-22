@@ -10,8 +10,8 @@ namespace Common
     public class AreaAndIterationPathTree
     {
         static ILogger Logger { get; } = MigratorLogging.CreateLogger<AreaAndIterationPathTree>();
-        public ISet<string> AreaPathList { get; } = new HashSet<string>();
-        public ISet<string> IterationPathList { get; } = new HashSet<string>();
+        public ISet<Tuple<string, WorkItemClassificationNode>> AreaPathList { get; } = new HashSet<Tuple<string, WorkItemClassificationNode>>();
+        public ISet<Tuple<string, WorkItemClassificationNode>> IterationPathList { get; } = new HashSet<Tuple<string, WorkItemClassificationNode>>();
 
         public AreaAndIterationPathTree(IList<WorkItemClassificationNode> nodeList)
         {
@@ -88,7 +88,7 @@ namespace Common
             ProcessNode(null, headnode, this.IterationPathList);
         }
 
-        private void ProcessNode(string path, WorkItemClassificationNode node, ISet<string> pathList)
+        private void ProcessNode(string path, WorkItemClassificationNode node, ISet<Tuple<string, WorkItemClassificationNode>> pathList)
         {
             if (node == null)
             {
@@ -105,7 +105,7 @@ namespace Common
                 currentpath = node.Name;
             }
 
-            pathList.Add(currentpath);
+            pathList.Add(new Tuple<string, WorkItemClassificationNode>(currentpath, node));
 
             if (node.Children != null)
             {
