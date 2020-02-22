@@ -188,10 +188,9 @@ namespace Common
             {
                 return await client.CreateOrUpdateClassificationNodeAsync(new WorkItemClassificationNode()
                 {
-                    Name = areaPath,
+                    Name = areaPath.Contains("\\") ? areaPath.Split("\\").Last() : areaPath,
                     StructureType = TreeNodeStructureType.Area,
-
-                }, projectId, TreeStructureGroup.Areas, areaPath);
+                }, projectId, TreeStructureGroup.Areas, areaPath.Replace(projectId, "").Replace(areaPath.Contains("\\") ? areaPath.Split("\\").Last() : areaPath, ""));
             }, 5);
         }
 
@@ -206,7 +205,7 @@ namespace Common
                     Attributes = new Dictionary<string, object>()
                     {
                         {"startDate", startDate },
-                        {"endDate", endDate },
+                        {"finishDate", endDate },
                     }
 
                 }, projectId, TreeStructureGroup.Iterations);

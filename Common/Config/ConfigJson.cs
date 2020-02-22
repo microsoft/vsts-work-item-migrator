@@ -42,6 +42,14 @@ namespace Common.Config
         [DefaultValue(true)]
         public bool SkipExisting { get; set; }
 
+        [JsonProperty(PropertyName = "move-area-paths", DefaultValueHandling = DefaultValueHandling.Populate)]
+        [DefaultValue(true)]
+        public bool MoveAreaPaths { get; set; }
+
+        [JsonProperty(PropertyName = "move-iterations", DefaultValueHandling = DefaultValueHandling.Populate)]
+        [DefaultValue(true)]
+        public bool MoveIterations{ get; set; }
+
         [JsonProperty(PropertyName = "move-history", DefaultValueHandling = DefaultValueHandling.Populate)]
         [DefaultValue(false)]
         public bool MoveHistory { get; set; }

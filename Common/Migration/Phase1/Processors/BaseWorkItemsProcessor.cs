@@ -32,41 +32,51 @@ namespace Common.Migration
             await Migrator.ReadTargetNodes(context, context.Config.TargetConnection.Project);
 
             #region Process area paths ..
-            Logger.LogInformation(LogDestination.All, $"Identified {context.SourceAreaAndIterationTree.AreaPathList.Count} area paths in source project.");
-
-            foreach (var areaPath in context.SourceAreaAndIterationTree.AreaPathList)
+            if (context.Config.MoveAreaPaths)
             {
-                if (context.TargetAreaAndIterationTree.AreaPathList.Any(p => p.Item1 == areaPath.Item1))
-                {
-                    Logger.LogInformation(LogDestination.All, $"[Exists] {areaPath}.");
-                }
-                else
-                {
-                    await WorkItemTrackingHelpers.CreateAreaPathAsync(context.TargetClient.WorkItemTrackingHttpClient, context.Config.TargetConnection.Project, areaPath.Item1);
-                    Logger.LogInformation(LogDestination.All, $"[Created] {areaPath}.");
-                }
-            }
+                Logger.LogInformation(LogDestination.All, $"Identified {context.SourceAreaAndIterationTree.AreaPathList.Count} area paths in source project.");
 
-            Logger.LogInformation(LogDestination.All, $"Area paths synchronized.");
+                foreach (var ap in context.SourceAreaAndIterationTree.AreaPathList)
+                {
+                    string areaPath = ap.Item1.Replace(context.Config.SourceConnection.Project, context.Config.TargetConnection.Project);
+
+                    if (context.TargetAreaAndIterationTree.AreaPathList.Any(p => p.Item1 == areaPath))
+                    {
+                        Logger.LogInformation(LogDestination.All, $"[Exists] {areaPath}.");
+                    }
+                    else
+                    {
+                        await WorkItemTrackingHelpers.CreateAreaPathAsync(context.TargetClient.WorkItemTrackingHttpClient, context.Config.TargetConnection.Project, areaPath);
+                        Logger.LogInformation(LogDestination.All, $"[Created] {areaPath}.");
+                    }
+                }
+
+                Logger.LogInformation(LogDestination.All, $"Area paths synchronized.");
+            }
             #endregion
 
             #region Process iterations ..
-            Logger.LogInformation(LogDestination.All, $"Identified {context.SourceAreaAndIterationTree.AreaPathList.Count} iterations in source project.");
-
-            foreach (var iteration in context.SourceAreaAndIterationTree.IterationPathList)
+            if (context.Config.MoveIterations)
             {
-                if (context.TargetAreaAndIterationTree.IterationPathList.Any(i => i.Item1 == iteration.Item1))
-                {
-                    Logger.LogInformation(LogDestination.All, $"[Exists] {iteration}.");
-                }
-                else
-                {
-                    await WorkItemTrackingHelpers.CreateIterationAsync(context.TargetClient.WorkItemTrackingHttpClient, context.Config.TargetConnection.Project, iteration.Item1, (DateTime)iteration.Item2.Attributes["startDate"], (DateTime)iteration.Item2.Attributes["endDate"]);
-                    Logger.LogInformation(LogDestination.All, $"[Created] {iteration}.");
-                }
-            }
+                Logger.LogInformation(LogDestination.All, $"Identified {context.SourceAreaAndIterationTree.AreaPathList.Count} iterations in source project.");
 
-            Logger.LogInformation(LogDestination.All, $"Iterations synchronized.");
+                foreach (var it in context.SourceAreaAndIterationTree.IterationPathList)
+                {
+                    string iteration = it.Item1.Replace(context.Config.SourceConnection.Project, context.Config.TargetConnection.Project);
+
+                    if (context.TargetAreaAndIterationTree.IterationPathList.Any(i => i.Item1 == iteration))
+                    {
+                        Logger.LogInformation(LogDestination.All, $"[Exists] {iteration}.");
+                    }
+                    else
+                    {
+                        await WorkItemTrackingHelpers.CreateIterationAsync(context.TargetClient.WorkItemTrackingHttpClient, context.Config.TargetConnection.Project, it.Item1.Split("\\").Last(), (DateTime)it.Item2.Attributes["startDate"], (DateTime)it.Item2.Attributes["finishDate"]);
+                        Logger.LogInformation(LogDestination.All, $"[Created] {iteration}.");
+                    }
+                }
+
+                Logger.LogInformation(LogDestination.All, $"Iterations synchronized.");
+            }
             #endregion
         }
 
