@@ -210,7 +210,7 @@ namespace Common
 
                 return await client.CreateOrUpdateClassificationNodeAsync(new WorkItemClassificationNode()
                 {
-                    Name = iteration,
+                    Name = iteration.Contains("\\") ? iteration.Split("\\").Last() : iteration,
                     StructureType = TreeNodeStructureType.Iteration,
                     Attributes = attrs
 

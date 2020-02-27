@@ -12,7 +12,7 @@ namespace UnitTests.Logging
         [TestMethod]
         public void OutputFormat_FormatIsCorrectWhenIncludeExceptionMessageIsFalseAndIncludeLogLevelTimeStampIsTrueAndExceptionIsNull()
         {
-            string expected = "[Error   @00.00.00.000] message";
+            string expected = "[Error] [00.00.00.000] message";
             bool includeExceptionMessage = false;
             bool includeLogLevelTimeStamp = true;
             int logDestination = LogDestination.All;
@@ -34,7 +34,7 @@ namespace UnitTests.Logging
         [TestMethod]
         public void OutputFormat_FormatIsCorrectWhenIncludeExceptionMessageIsFalseAndIncludeLogLevelTimeStampIsTrueAndExceptionExistsWithNullMessage()
         {
-            string expected = "[Error   @00.00.00.000] message";
+            string expected = "[Error] [00.00.00.000] message";
             bool includeExceptionMessage = false;
             bool includeLogLevelTimeStamp = true;
             int logDestination = LogDestination.All;
@@ -57,7 +57,7 @@ namespace UnitTests.Logging
         [TestMethod]
         public void OutputFormat_FormatIsCorrectWhenIncludeExceptionMessageIsFalseAndIncludeLogLevelTimeStampIsTrueAndExceptionExistsWithMessage()
         {
-            string expected = "[Error   @00.00.00.000] message";
+            string expected = "[Error] [00.00.00.000] message";
             bool includeExceptionMessage = false;
             bool includeLogLevelTimeStamp = true;
             int logDestination = LogDestination.All;
@@ -80,7 +80,7 @@ namespace UnitTests.Logging
         [TestMethod]
         public void OutputFormat_FormatIsCorrectWhenIncludeExceptionMessageIsTrueAndIncludeLogLevelTimeStampIsTrueAndExceptionIsNull()
         {
-            string expected = "[Error   @00.00.00.000] message";
+            string expected = "[Error] [00.00.00.000] message";
             bool includeExceptionMessage = true;
             bool includeLogLevelTimeStamp = true;
             int logDestination = LogDestination.All;
@@ -102,7 +102,7 @@ namespace UnitTests.Logging
         [TestMethod]
         public void OutputFormat_FormatIsCorrectWhenIncludeExceptionMessageIsTrueAndIncludeLogLevelTimeStampIsTrueAndExceptionExistsWithNullMessage()
         {
-            string expected = "[Error   @00.00.00.000] message. Exception of type 'System.Exception' was thrown.";
+            string expected = "[Error] [00.00.00.000] message. Exception of type 'System.Exception' was thrown.";
             bool includeExceptionMessage = true;
             bool includeLogLevelTimeStamp = true;
             int logDestination = LogDestination.All;
@@ -125,7 +125,7 @@ namespace UnitTests.Logging
         [TestMethod]
         public void OutputFormat_FormatIsCorrectWhenIncludeExceptionMessageIsTrueAndIncludeLogLevelTimeStampIsTrueAndExceptionExistsWithMessage()
         {
-            string expected = "[Error   @00.00.00.000] message. This is sample Exception Message.";
+            string expected = "[Error] [00.00.00.000] message. This is sample Exception Message.";
             bool includeExceptionMessage = true;
             bool includeLogLevelTimeStamp = true;
             int logDestination = LogDestination.All;

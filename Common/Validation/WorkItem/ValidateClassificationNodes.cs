@@ -24,8 +24,8 @@ namespace Common.Validation
             {
                 var classificationNodes = await WorkItemTrackingHelpers.GetClassificationNodes(context.TargetClient.WorkItemTrackingHttpClient, context.Config.TargetConnection.Project);
                 var nodes = new AreaAndIterationPathTree(classificationNodes);
-                context.TargetAreaPaths = nodes.AreaPathList.Select(p => p.Item1).ToHashSet();
-                context.TargetIterationPaths = nodes.IterationPathList.Select(p => p.Item1).ToHashSet();
+                context.TargetAreaPaths = nodes.AreaPathList;
+                context.TargetIterationPaths = nodes.IterationPathList;
             }
             catch (Exception e)
             {

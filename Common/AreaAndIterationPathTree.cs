@@ -10,8 +10,10 @@ namespace Common
     public class AreaAndIterationPathTree
     {
         static ILogger Logger { get; } = MigratorLogging.CreateLogger<AreaAndIterationPathTree>();
-        public ISet<Tuple<string, WorkItemClassificationNode>> AreaPathList { get; } = new HashSet<Tuple<string, WorkItemClassificationNode>>();
-        public ISet<Tuple<string, WorkItemClassificationNode>> IterationPathList { get; } = new HashSet<Tuple<string, WorkItemClassificationNode>>();
+        public ISet<string> AreaPathList { get; } = new HashSet<string>();
+        public ISet<string> IterationPathList { get; } = new HashSet<string>();
+        public IDictionary<string, WorkItemClassificationNode> IterationPathListLookup { get; } = new Dictionary<string, WorkItemClassificationNode>();
+        public IDictionary<string, WorkItemClassificationNode> AreaPathListLookup { get; } = new Dictionary<string, WorkItemClassificationNode>();
 
         public AreaAndIterationPathTree(IList<WorkItemClassificationNode> nodeList)
         {
@@ -74,7 +76,7 @@ namespace Common
                 return;
             }
             //path for the headnode is null
-            ProcessNode(null, headnode, this.AreaPathList);
+            ProcessNode(null, headnode, this.AreaPathList, this.AreaPathListLookup);
         }
 
         private void CreateIterationPathList(WorkItemClassificationNode headnode)
@@ -85,10 +87,10 @@ namespace Common
                 return;
             }
             //path for the headnode is null
-            ProcessNode(null, headnode, this.IterationPathList);
+            ProcessNode(null, headnode, this.IterationPathList, this.IterationPathListLookup);
         }
 
-        private void ProcessNode(string path, WorkItemClassificationNode node, ISet<Tuple<string, WorkItemClassificationNode>> pathList)
+        private void ProcessNode(string path, WorkItemClassificationNode node, ISet<string> pathList, IDictionary<string, WorkItemClassificationNode> pathListLookup)
         {
             if (node == null)
             {
@@ -105,13 +107,15 @@ namespace Common
                 currentpath = node.Name;
             }
 
-            pathList.Add(new Tuple<string, WorkItemClassificationNode>(currentpath, node));
+            pathList.Add(currentpath);
+            pathListLookup.Add(currentpath, node);
+
 
             if (node.Children != null)
             {
                 foreach (var child in node.Children)
                 {
-                    ProcessNode(currentpath, child, pathList);
+                    ProcessNode(currentpath, child, pathList, pathListLookup);
                 }
             }
         }

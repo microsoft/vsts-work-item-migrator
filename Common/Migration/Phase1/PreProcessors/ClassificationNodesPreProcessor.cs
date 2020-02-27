@@ -7,9 +7,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Common.Config;
 using Logging;
+using Microsoft.TeamFoundation.TestManagement.WebApi;
 
 namespace Common.Migration
 {
+
     public class ClassificationNodesPreProcessor : IPhase1PreProcessor
     {
         static ILogger Logger { get; } = MigratorLogging.CreateLogger<ClassificationNodesPreProcessor>();
@@ -26,75 +28,28 @@ namespace Common.Migration
         {
             this.context = context;
         }
+
         public async Task Process(IBatchMigrationContext batchContext)
         {
             int modificationCount = 0;
             if (context.Config.MoveAreaPaths || context.Config.MoveIterations)
             {
-                await Migrator.ReadSourceNodes(context, context.Config.SourceConnection.Project);
-                await Migrator.ReadTargetNodes(context, context.Config.TargetConnection.Project);
+                await Task.WhenAll(
+                    Migrator.ReadSourceNodes(context, context.Config.SourceConnection.Project),
+                    Migrator.ReadTargetNodes(context, context.Config.TargetConnection.Project));
             }
 
             #region Process area paths ..
             if (context.Config.MoveAreaPaths)
             {
-                Logger.LogInformation(LogDestination.All, $"Identified {context.SourceAreaAndIterationTree.AreaPathList.Count} area paths in source project.");
-
-                foreach (var ap in context.SourceAreaAndIterationTree.AreaPathList)
-                {
-                    string areaPath = ap.Item1.Replace(context.Config.SourceConnection.Project, context.Config.TargetConnection.Project);
-
-                    // If the area path is not found in the work items we're currently processing then just ignore it.
-                    if (!batchContext.SourceWorkItems.Any(w => w.Fields.ContainsKey("System.AreaPath") && w.Fields["System.AreaPath"].ToString().ToLower().EndsWith(ap.Item1.ToLower())))
-                        continue;
-
-                    if (context.TargetAreaAndIterationTree.AreaPathList.Any(p => p.Item1 == areaPath))
-                    {
-                        Logger.LogInformation(LogDestination.All, $"[Exists] {areaPath}.");
-                    }
-                    else
-                    {
-                        modificationCount += 1;
-                        await WorkItemTrackingHelpers.CreateAreaPathAsync(context.TargetClient.WorkItemTrackingHttpClient, context.Config.TargetConnection.Project, areaPath);
-                        Logger.LogSuccess(LogDestination.All, $"[Created] {areaPath}.");
-                    }
-                }
-
-                Logger.LogInformation(LogDestination.All, $"Area paths synchronized.");
+                modificationCount = await ProcessAreaPaths(batchContext, modificationCount);
             }
             #endregion
 
             #region Process iterations ..
             if (context.Config.MoveIterations)
             {
-                Logger.LogInformation(LogDestination.All, $"Identified {context.SourceAreaAndIterationTree.AreaPathList.Count} iterations in source project.");
-
-                foreach (var it in context.SourceAreaAndIterationTree.IterationPathList)
-                {
-                    string iteration = it.Item1.Replace(context.Config.SourceConnection.Project, context.Config.TargetConnection.Project);
-
-                    // If the iteration path is not found in the work items we're currently processing then just ignore it.
-                    if (!batchContext.SourceWorkItems.Any(w => w.Fields.ContainsKey("System.IterationPath") && w.Fields["System.IterationPath"].ToString().ToLower().EndsWith(it.Item1.ToLower())))
-                        continue;
-
-                    if (context.TargetAreaAndIterationTree.IterationPathList.Any(i => i.Item1 == iteration))
-                    {
-                        Logger.LogInformation(LogDestination.All, $"[Exists] {iteration}.");
-                    }
-                    else
-                    {
-                        modificationCount += 1;
-                        await WorkItemTrackingHelpers.CreateIterationAsync(
-                            context.TargetClient.WorkItemTrackingHttpClient, 
-                            context.Config.TargetConnection.Project, 
-                            it.Item1.Split("\\").Last(), it.Item2.Attributes == null ? null : (DateTime?)it.Item2.Attributes?["startDate"], 
-                            it.Item2.Attributes == null ? null : (DateTime?)it.Item2.Attributes["finishDate"]);
-
-                        Logger.LogSuccess(LogDestination.All, $"[Created] {iteration}.");
-                    }
-                }
-
-                Logger.LogInformation(LogDestination.All, $"Iterations synchronized.");
+                modificationCount = await ProcessIterationPaths(batchContext, modificationCount);
             }
             #endregion
 
@@ -103,6 +58,79 @@ namespace Common.Migration
                 await Migrator.ReadTargetNodes(context, context.Config.TargetConnection.Project);
             }
         }
-        
+
+        public async Task<int> ProcessIterationPaths(IBatchMigrationContext batchContext, int modificationCount)
+        {
+            Logger.LogInformation(LogDestination.All, $"Identified {context.SourceAreaAndIterationTree.IterationPathList.Count} iterations in source project.");
+
+            foreach (var iterationPath in context.SourceAreaAndIterationTree.IterationPathList)
+            {
+                string iterationPathInTarget = iterationPath.Replace(context.Config.SourceConnection.Project, context.Config.TargetConnection.Project);
+
+                // If the iteration path is not found in the work items we're currently processing then just ignore it.
+                if (!batchContext.SourceWorkItems.Any(w => w.Fields.ContainsKey("System.IterationPath") && w.Fields["System.IterationPath"].ToString().ToLower().Equals(iterationPath.ToLower())))
+                    continue;
+
+                if (context.TargetAreaAndIterationTree.IterationPathListLookup.ContainsKey(iterationPathInTarget))
+                {
+                    Logger.LogInformation(LogDestination.All, $"[Exists] {iterationPathInTarget}.");
+                }
+                else
+                {
+                    var sourceIterationNode = context.SourceAreaAndIterationTree.IterationPathListLookup[iterationPath];
+                    modificationCount += 1;
+                    await CreateIterationPath(iterationPath, sourceIterationNode);
+
+                    Logger.LogSuccess(LogDestination.All, $"[Created] {iterationPathInTarget}.");
+                }
+            }
+
+            Logger.LogInformation(LogDestination.All, $"Iterations synchronized.");
+            return modificationCount;
+        }
+
+        public async virtual Task CreateIterationPath(string iterationPath, WorkItemClassificationNode sourceIterationNode)
+        {
+            await WorkItemTrackingHelpers.CreateIterationAsync(
+                context.TargetClient.WorkItemTrackingHttpClient,
+                context.Config.TargetConnection.Project,
+                iterationPath,
+                sourceIterationNode.Attributes == null ? null : (DateTime?)sourceIterationNode.Attributes?["startDate"],
+                sourceIterationNode.Attributes == null ? null : (DateTime?)sourceIterationNode.Attributes["finishDate"]);
+        }
+
+        public async Task<int> ProcessAreaPaths(IBatchMigrationContext batchContext, int modificationCount)
+        {
+            Logger.LogInformation(LogDestination.All, $"Identified {context.SourceAreaAndIterationTree.AreaPathListLookup.Count} area paths in source project.");
+
+            foreach (var ap in context.SourceAreaAndIterationTree.AreaPathList)
+            {
+                string areaPathInTarget = ap.Replace(context.Config.SourceConnection.Project, context.Config.TargetConnection.Project);
+
+                // If the area path is not found in the work items we're currently processing then just ignore it.
+                if (!batchContext.SourceWorkItems.Any(w => w.Fields.ContainsKey("System.AreaPath") && w.Fields["System.AreaPath"].ToString().ToLower().Equals(ap.ToLower())))
+                {
+                    continue;
+                }
+                else if (context.TargetAreaAndIterationTree.AreaPathList.Any(a => a.ToLower() == areaPathInTarget.ToLower()))
+                {
+                    Logger.LogInformation(LogDestination.All, $"[Exists] {areaPathInTarget}.");
+                }
+                else
+                {
+                    modificationCount += 1;
+                    await CreateAreaPath(areaPathInTarget); 
+                    Logger.LogSuccess(LogDestination.All, $"[Created] {areaPathInTarget}.");
+                }
+            }
+
+            Logger.LogInformation(LogDestination.All, $"Area paths synchronized.");
+            return modificationCount;
+        }
+
+        public async virtual Task CreateAreaPath(string areaPathInTarget)
+        {
+            await WorkItemTrackingHelpers.CreateAreaPathAsync(context.TargetClient.WorkItemTrackingHttpClient, context.Config.TargetConnection.Project, areaPathInTarget);
+        }
     }
 }

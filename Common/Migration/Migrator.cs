@@ -374,8 +374,8 @@ namespace Common.Migration
         {
             var nodes = await WorkItemTrackingHelpers.GetClassificationNodes(migrationContext.TargetClient.WorkItemTrackingHttpClient, projectId);
             migrationContext.TargetAreaAndIterationTree = new AreaAndIterationPathTree(nodes);
-            migrationContext.TargetAreaPaths = Enumerable.ToHashSet(migrationContext.TargetAreaAndIterationTree.AreaPathList.Select(x => x.Item1));
-            migrationContext.TargetIterationPaths = Enumerable.ToHashSet(migrationContext.TargetAreaAndIterationTree.IterationPathList.Select(x => x.Item1));
+            migrationContext.TargetAreaPaths = migrationContext.TargetAreaAndIterationTree.AreaPathList;
+            migrationContext.TargetIterationPaths = migrationContext.TargetAreaAndIterationTree.IterationPathList;
         }
 
         public static int GetTargetId(int sourceId, IEnumerable<WorkItemMigrationState> workItemMigrationStates)
