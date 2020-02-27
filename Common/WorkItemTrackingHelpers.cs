@@ -194,19 +194,25 @@ namespace Common
             }, 5);
         }
 
-        public async static Task<WorkItemClassificationNode> CreateIterationAsync(WorkItemTrackingHttpClient client, string projectId, string iteration, DateTime startDate, DateTime endDate)
+        public async static Task<WorkItemClassificationNode> CreateIterationAsync(WorkItemTrackingHttpClient client, string projectId, string iteration, DateTime? startDate, DateTime? endDate)
         {
             return await RetryHelper.RetryAsync(async () =>
             {
+                var attrs = new Dictionary<string, object>();
+                if (startDate.HasValue)
+                {
+                    attrs.Add("startDate", startDate);
+                }
+                if (endDate.HasValue)
+                {
+                    attrs.Add("finishDate", endDate);
+                }
+
                 return await client.CreateOrUpdateClassificationNodeAsync(new WorkItemClassificationNode()
                 {
                     Name = iteration,
                     StructureType = TreeNodeStructureType.Iteration,
-                    Attributes = new Dictionary<string, object>()
-                    {
-                        {"startDate", startDate },
-                        {"finishDate", endDate },
-                    }
+                    Attributes = attrs
 
                 }, projectId, TreeStructureGroup.Iterations);
             }, 5);
