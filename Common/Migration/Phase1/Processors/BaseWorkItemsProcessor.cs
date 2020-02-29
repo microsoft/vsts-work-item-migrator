@@ -25,8 +25,7 @@ namespace Common.Migration
         public abstract int GetWorkItemsToProcessCount(IBatchMigrationContext batchContext);
 
         public abstract BaseWitBatchRequestGenerator GetWitBatchRequestGenerator(IMigrationContext context, IBatchMigrationContext batchContext);
-
-
+        
         public async Task Process(IMigrationContext context)
         {
             var workItemsAndStateToMigrate = this.GetWorkItemsAndStateToMigrate(context);

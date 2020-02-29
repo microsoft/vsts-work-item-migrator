@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Common.Config;
 using Logging;
-using Microsoft.TeamFoundation.TestManagement.WebApi;
+using Microsoft.Extensions.Logging;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
 namespace Common.Migration
 {
@@ -21,7 +18,7 @@ namespace Common.Migration
 
         public bool IsEnabled(ConfigJson config)
         {
-            return true;
+            return config.MoveAreaPaths || config.MoveIterations;
         }
 
         public async Task Prepare(IMigrationContext context)
@@ -32,26 +29,19 @@ namespace Common.Migration
         public async Task Process(IBatchMigrationContext batchContext)
         {
             int modificationCount = 0;
-            if (context.Config.MoveAreaPaths || context.Config.MoveIterations)
-            {
-                await Task.WhenAll(
-                    Migrator.ReadSourceNodes(context, context.Config.SourceConnection.Project),
-                    Migrator.ReadTargetNodes(context, context.Config.TargetConnection.Project));
-            }
+            await Task.WhenAll(
+                Migrator.ReadSourceNodes(context, context.Config.SourceConnection.Project),
+                Migrator.ReadTargetNodes(context, context.Config.TargetConnection.Project));
 
-            #region Process area paths ..
             if (context.Config.MoveAreaPaths)
             {
-                modificationCount = await ProcessAreaPaths(batchContext, modificationCount);
+                modificationCount += await ProcessAreaPaths(batchContext);
             }
-            #endregion
 
-            #region Process iterations ..
             if (context.Config.MoveIterations)
             {
-                modificationCount = await ProcessIterationPaths(batchContext, modificationCount);
+                modificationCount += await ProcessIterationPaths(batchContext);
             }
-            #endregion
 
             if (modificationCount > 0)
             {
@@ -59,8 +49,9 @@ namespace Common.Migration
             }
         }
 
-        public async Task<int> ProcessIterationPaths(IBatchMigrationContext batchContext, int modificationCount)
+        public async Task<int> ProcessIterationPaths(IBatchMigrationContext batchContext)
         {
+            int modificationCount = 0;
             Logger.LogInformation(LogDestination.All, $"Identified {context.SourceAreaAndIterationTree.IterationPathList.Count} iterations in source project.");
 
             foreach (var iterationPath in context.SourceAreaAndIterationTree.IterationPathList)
@@ -99,16 +90,17 @@ namespace Common.Migration
                 sourceIterationNode.Attributes == null ? null : (DateTime?)sourceIterationNode.Attributes["finishDate"]);
         }
 
-        public async Task<int> ProcessAreaPaths(IBatchMigrationContext batchContext, int modificationCount)
+        public async Task<int> ProcessAreaPaths(IBatchMigrationContext batchContext)
         {
+            int modificationCount = 0;
             Logger.LogInformation(LogDestination.All, $"Identified {context.SourceAreaAndIterationTree.AreaPathListLookup.Count} area paths in source project.");
 
-            foreach (var ap in context.SourceAreaAndIterationTree.AreaPathList)
+            foreach (var areaPath in context.SourceAreaAndIterationTree.AreaPathList)
             {
-                string areaPathInTarget = ap.Replace(context.Config.SourceConnection.Project, context.Config.TargetConnection.Project);
+                string areaPathInTarget = areaPath.Replace(context.Config.SourceConnection.Project, context.Config.TargetConnection.Project);
 
                 // If the area path is not found in the work items we're currently processing then just ignore it.
-                if (!batchContext.SourceWorkItems.Any(w => w.Fields.ContainsKey("System.AreaPath") && w.Fields["System.AreaPath"].ToString().ToLower().Equals(ap.ToLower())))
+                if (!batchContext.SourceWorkItems.Any(w => w.Fields.ContainsKey("System.AreaPath") && w.Fields["System.AreaPath"].ToString().ToLower().Equals(areaPath.ToLower())))
                 {
                     continue;
                 }
