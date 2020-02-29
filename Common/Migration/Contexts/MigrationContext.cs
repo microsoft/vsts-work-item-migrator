@@ -35,6 +35,8 @@ namespace Common.Migration
         public IList<string> UnsupportedFields => unsupportedFields;
 
         public IList<string> FieldsThatRequireSourceProjectToBeReplacedWithTargetProject { get; set; }
+        public AreaAndIterationPathTree SourceAreaAndIterationTree { get; set; }
+        public AreaAndIterationPathTree TargetAreaAndIterationTree { get; set; }
 
         // List of fields that we do not support in migration because they are related to the board or another reason.
         private readonly IList<string> unsupportedFields = new ReadOnlyCollection<string>(new[]{
