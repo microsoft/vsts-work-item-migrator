@@ -25,7 +25,7 @@ namespace UnitTests.Preprocess
             {
                 new WorkItemClassificationNode()
                 {
-                    Name = "Root Node",
+                    Name = "Test Src Project",
                     Children = new List<WorkItemClassificationNode>()
                     {
                         new WorkItemClassificationNode()
@@ -49,7 +49,7 @@ namespace UnitTests.Preprocess
             {
                 new WorkItemClassificationNode()
                 {
-                    Name = "Root Node",
+                    Name = "Test Target Project",
                     Children = new List<WorkItemClassificationNode>()
                     {
                         new WorkItemClassificationNode()
@@ -80,29 +80,29 @@ namespace UnitTests.Preprocess
                 {
                     Fields = new Dictionary<string, object>()
                     {
-                        { "System.AreaPath", "Root Node\\Child Node 3"}
+                        { "System.AreaPath", "Test Src Project\\Child Node 3"}
                     }
                 },
                 new WorkItem()
                 {
                     Fields = new Dictionary<string, object>()
                     {
-                        { "System.AreaPath", "Root Node\\Child Node 1"}
+                        { "System.AreaPath", "Test Src Project\\Child Node 1"}
                     }
                 },
                 new WorkItem()
                 {
                     Fields = new Dictionary<string, object>()
                     {
-                        { "System.AreaPath", "Root Node"}
+                        { "System.AreaPath", "Test Src Project"}
                     }
                 },
             });
 
             await processorMock.Object.Prepare(contextMock.Object);
-            int modified = await processorMock.Object.ProcessAreaPaths(batchContextMock.Object, 0);
+            int modified = await processorMock.Object.ProcessAreaPaths(batchContextMock.Object);
 
-            processorMock.Verify(x => x.CreateAreaPath(It.IsIn("Root Node\\Child Node 3")), Times.Once);
+            processorMock.Verify(x => x.CreateAreaPath(It.IsIn("Test Target Project\\Child Node 3")), Times.Once);
             Assert.IsTrue(modified == 1);
 
         }
@@ -185,7 +185,7 @@ namespace UnitTests.Preprocess
             });
 
             await processorMock.Object.Prepare(contextMock.Object);
-            int modified = await processorMock.Object.ProcessIterationPaths(batchContextMock.Object, 0);
+            int modified = await processorMock.Object.ProcessIterationPaths(batchContextMock.Object);
 
             processorMock.Verify(x => x.CreateIterationPath(It.IsIn("Test Src Project\\Sprint 2"), It.IsAny<WorkItemClassificationNode>()), Times.Once);
             Assert.AreEqual(modified, 1);

@@ -349,12 +349,10 @@ namespace Common.Migration
         }
 
         /// <summary>
-        /// Populates batchContext.WorkItems
+        /// Populates migrationContext.SourceAreaAndIterationTree
         /// </summary>
         /// <param name="migrationContext"></param>
-        /// <param name="workItemIds"></param>
-        /// <param name="batchContext"></param>
-        /// <param name="expand"></param>
+        /// <param name="projectId"></param>
         /// <returns></returns>
         public static async Task ReadSourceNodes(IMigrationContext migrationContext, string projectId)
         {
@@ -363,12 +361,10 @@ namespace Common.Migration
         }
 
         /// <summary>
-        /// Populates batchContext.WorkItems
+        /// Populates migrationContext.TargetAreaAndIterationTree, migrationContext.TargetAreaPaths, and migrationContext.TargetIterationPaths
         /// </summary>
         /// <param name="migrationContext"></param>
-        /// <param name="workItemIds"></param>
-        /// <param name="batchContext"></param>
-        /// <param name="expand"></param>
+        /// <param name="projectId"></param>
         /// <returns></returns>
         public static async Task ReadTargetNodes(IMigrationContext migrationContext, string projectId)
         {

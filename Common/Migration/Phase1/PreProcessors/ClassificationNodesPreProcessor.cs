@@ -56,7 +56,8 @@ namespace Common.Migration
 
             foreach (var iterationPath in context.SourceAreaAndIterationTree.IterationPathList)
             {
-                string iterationPathInTarget = iterationPath.Replace(context.Config.SourceConnection.Project, context.Config.TargetConnection.Project);
+                string iterationPathInTarget = AreaAndIterationPathTree.ReplaceLeadingProjectName(iterationPath,
+                    context.Config.SourceConnection.Project, context.Config.TargetConnection.Project);
 
                 // If the iteration path is not found in the work items we're currently processing then just ignore it.
                 if (!batchContext.SourceWorkItems.Any(w => w.Fields.ContainsKey("System.IterationPath") && w.Fields["System.IterationPath"].ToString().ToLower().Equals(iterationPath.ToLower())))
@@ -97,7 +98,8 @@ namespace Common.Migration
 
             foreach (var areaPath in context.SourceAreaAndIterationTree.AreaPathList)
             {
-                string areaPathInTarget = areaPath.Replace(context.Config.SourceConnection.Project, context.Config.TargetConnection.Project);
+                string areaPathInTarget = AreaAndIterationPathTree.ReplaceLeadingProjectName(areaPath,
+                    context.Config.SourceConnection.Project, context.Config.TargetConnection.Project);
 
                 // If the area path is not found in the work items we're currently processing then just ignore it.
                 if (!batchContext.SourceWorkItems.Any(w => w.Fields.ContainsKey("System.AreaPath") && w.Fields["System.AreaPath"].ToString().ToLower().Equals(areaPath.ToLower())))
@@ -111,7 +113,7 @@ namespace Common.Migration
                 else
                 {
                     modificationCount += 1;
-                    await CreateAreaPath(areaPathInTarget); 
+                    await CreateAreaPath(areaPathInTarget);
                     Logger.LogSuccess(LogDestination.All, $"[Created] {areaPathInTarget}.");
                 }
             }
