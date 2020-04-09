@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.Common;
+using Microsoft.VisualStudio.Services.WebApi;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 using Newtonsoft.Json;
 using Common.ApiWrappers;
@@ -212,6 +213,13 @@ namespace Common.Migration
                 }
 
                 jsonPatchOperations.Add(GetAddHyperlinkWithCommentOperation(targetWorkItems, state, sourceId, targetId, sourceWorkItem, enabledPhaseStatuses));
+
+                if (this.context.Config.IncludeWebLink)
+                {
+                    var link = (ReferenceLink)sourceWorkItem.Links.Links["html"];
+                    var addWebLinkOperation = MigrationHelpers.GetHyperlinkAddOperation(link.Href);
+                    jsonPatchOperations.Add(addWebLinkOperation);
+                }
 
                 if (jsonPatchOperations.Any())
                 {

@@ -42,8 +42,8 @@ namespace UnitTests.Validation
         {
             bool expected = true;
 
-            ISet<string> sourceFields = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase) { "System.Id", "System.AREAPATH" };
-            ISet<string> targetFields = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase) { "System.id", "System.areapath" };
+            ISet<string> sourceFields = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "System.Id", "System.AREAPATH" };
+            ISet<string> targetFields = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "System.id", "System.areapath" };
 
             IValidationContext context = new ValidationContext();
             context.SourceFields.TryAdd("System.Id", new WorkItemField { ReferenceName = "System.Id", Type = FieldType.Integer });

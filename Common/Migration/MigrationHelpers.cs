@@ -111,7 +111,7 @@ namespace Common.Migration
             return jsonPatchOperation;
         }
 
-        public static JsonPatchOperation GetHyperlinkAddOperation(string hyperlink, string comment)
+        public static JsonPatchOperation GetHyperlinkAddOperation(string hyperlink, string comment = null)
         {
             JsonPatchOperation jsonPatchOperation = new JsonPatchOperation();
             jsonPatchOperation.Operation = Operation.Add;

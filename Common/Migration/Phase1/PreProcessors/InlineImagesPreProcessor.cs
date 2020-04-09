@@ -36,7 +36,7 @@ namespace Common.Migration
         private ISet<string> GetHtmlFieldReferenceNames(IList<WorkItemField> sourceWorkItemFields)
         {
             IEnumerable<WorkItemField> htmlFields = sourceWorkItemFields.Where(a => a.Type == FieldType.Html);
-            ISet<string> htmlFieldReferenceNames = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            ISet<string> htmlFieldReferenceNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var field in htmlFields)
             {
                 htmlFieldReferenceNames.Add(field.ReferenceName);
