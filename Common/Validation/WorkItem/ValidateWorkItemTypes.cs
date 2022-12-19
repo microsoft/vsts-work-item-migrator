@@ -214,7 +214,8 @@ namespace Common.Validation
             {
                 if (!context.ValidatedFields.Contains(field) && !context.SkippedFields.Contains(field))
                 {
-                    if (!targetFields.Contains(field))
+                    var replacementFieldExists = context.Config.FieldReplacements.TryGetValue(field, out var replacementField);
+                    if (!replacementFieldExists && !targetFields.Contains(field) || replacementFieldExists && replacementField.FieldReferenceName == null)
                     {
                         matches = false;
                         context.SkippedFields.Add(field);
@@ -222,7 +223,10 @@ namespace Common.Validation
                     }
                     else
                     {
-                        matches &= CompareField(context, context.SourceFields[field], context.TargetFields[field]);
+                        if(!replacementFieldExists)
+                            matches &= CompareField(context, context.SourceFields[field], context.TargetFields[field]);
+                        else
+                            matches &= CompareField(context, context.SourceFields[field], context.TargetFields[replacementField.FieldReferenceName]);
                     }
                 }
             }
