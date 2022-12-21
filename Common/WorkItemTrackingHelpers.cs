@@ -182,6 +182,42 @@ namespace Common
             return attachmentReference;
         }
 
+        public async static Task<WorkItemClassificationNode> CreateAreaPathAsync(WorkItemTrackingHttpClient client, string projectId, string areaPath)
+        {
+            return await RetryHelper.RetryAsync(async () =>
+            {
+                return await client.CreateOrUpdateClassificationNodeAsync(new WorkItemClassificationNode()
+                {
+                    Name = areaPath.Contains("\\") ? areaPath.Split("\\").Last() : areaPath,
+                    StructureType = TreeNodeStructureType.Area,
+                }, projectId, TreeStructureGroup.Areas, areaPath.Replace(projectId, "").Replace(areaPath.Contains("\\") ? areaPath.Split("\\").Last() : areaPath, ""));
+            }, 5);
+        }
+
+        public async static Task<WorkItemClassificationNode> CreateIterationAsync(WorkItemTrackingHttpClient client, string projectId, string iteration, DateTime? startDate, DateTime? endDate)
+        {
+            return await RetryHelper.RetryAsync(async () =>
+            {
+                var attrs = new Dictionary<string, object>();
+                if (startDate.HasValue)
+                {
+                    attrs.Add("startDate", startDate);
+                }
+                if (endDate.HasValue)
+                {
+                    attrs.Add("finishDate", endDate);
+                }
+
+                return await client.CreateOrUpdateClassificationNodeAsync(new WorkItemClassificationNode()
+                {
+                    Name = iteration.Contains("\\") ? iteration.Split("\\").Last() : iteration,
+                    StructureType = TreeNodeStructureType.Iteration,
+                    Attributes = attrs
+
+                }, projectId, TreeStructureGroup.Iterations);
+            }, 5);
+        }
+
         public async static Task<Stream> GetAttachmentAsync(WorkItemTrackingHttpClient client, Guid id)
         {
             return await RetryHelper.RetryAsync(async () =>

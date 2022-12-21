@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 
 namespace Logging
 {
@@ -44,7 +45,7 @@ namespace Logging
                 // HH specifies 24-hour time format
                 string timeStamp = DateTimeStampString();
                 string logLevelName = LogLevelName();
-                return $"[{logLevelName}   @{timeStamp}] {this.Message}";
+                return string.Join(Environment.NewLine, Message.Split(Environment.NewLine).Select(line => $"[{logLevelName}] [{timeStamp}] {line}"));
             }
             else
             {
@@ -54,7 +55,7 @@ namespace Logging
 
         public virtual string DateTimeStampString()
         {
-            return this.DateTimeStamp.ToString("HH.mm.ss.fff");
+            return this.DateTimeStamp.ToString("HH:mm:ss.fff");
         }
 
         public virtual string LogLevelName()

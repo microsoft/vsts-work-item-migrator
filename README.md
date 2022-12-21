@@ -13,6 +13,7 @@ WiMigrator is a command line tool designed with the following goals in mind:
   * Git commit links (link to the source git commit)
   * Work item history (last 200 revisions as an attachment)
   * Tagging of the source items that have been migrated
+  * Area paths and iterations
 
 # Getting Started
 ## Requirements
