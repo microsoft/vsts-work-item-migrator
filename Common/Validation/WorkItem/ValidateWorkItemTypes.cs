@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -129,11 +129,7 @@ namespace Common.Validation
                     }
                 }
 
-                if (targetFieldMap.Value != null && targetFieldMap.MappingName != null)
-                {
-                    throw new ValidationException($"Under fields-replacements in config, for source field: {sourceField}, you must specify value or mapping-name, but not both.");
-                }
-                else if (!string.IsNullOrEmpty(targetFieldMap.MappingName))
+                if (!string.IsNullOrEmpty(targetFieldMap.MappingName))
                 {
                     if (!context.Config.FieldMappings.ContainsKey(targetFieldMap.MappingName))
                     {

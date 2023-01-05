@@ -108,6 +108,9 @@ namespace Common.Config
         [JsonProperty(PropertyName = "field-mappings", DefaultValueHandling = DefaultValueHandling.Populate)]
         public Dictionary<string, Dictionary<string, string>> FieldMappings { get; set; }
 
+        [JsonProperty(PropertyName = "static-fields", DefaultValueHandling = DefaultValueHandling.Populate)]
+        public Dictionary<string, Dictionary<string, object>> StaticFields { get; set; }
+
         [JsonProperty(PropertyName = "send-email-notification", DefaultValueHandling = DefaultValueHandling.Populate)]
         [DefaultValue(false)]
         public bool SendEmailNotification { get; set; }

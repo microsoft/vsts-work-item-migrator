@@ -90,7 +90,13 @@ namespace Common.Migration
 
             IList<string> fieldNamesAlreadyPopulated = new List<string>();
 
-            foreach (var sourceField in sourceWorkItem.Fields)
+            var fields = sourceWorkItem.Fields.AsEnumerable().ToList();
+            if (migrationContext.Config.StaticFields.ContainsKey(sourceWorkItemType))
+            {
+                fields.AddRange(migrationContext.Config.StaticFields[sourceWorkItemType]);
+            }
+
+            foreach (var sourceField in fields)
             {
                 if (fieldNamesAlreadyPopulated.Contains(sourceField.Key)) // we have already processed the content for this target field so skip
                 {
@@ -174,11 +180,7 @@ namespace Common.Migration
                     fieldNamesAlreadyPopulated.Add(targetFieldMap.FieldReferenceName);
                 }
 
-                if (targetFieldMap.Value != null)
-                {
-                    fieldValue = targetFieldMap.Value; // set targetField to value
-                }
-                else if (fieldValue is string sFieldValue && targetFieldMap.MappingName != null && migrationContext.Config.FieldMappings.ContainsKey(targetFieldMap.MappingName))
+                if (fieldValue is string sFieldValue && targetFieldMap.MappingName != null && migrationContext.Config.FieldMappings.ContainsKey(targetFieldMap.MappingName))
                 {
                     var mapping = migrationContext.Config.FieldMappings[targetFieldMap.MappingName];
                     if (mapping.ContainsKey(sFieldValue))

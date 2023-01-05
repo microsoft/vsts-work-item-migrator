@@ -5,9 +5,6 @@ namespace Common.Config
 {
     public class TargetFieldMap
     {
-        [JsonProperty(Required = Required.DisallowNull)]
-        public string Value { get; set; }
-
         [JsonProperty(PropertyName = "specific-to-type", Required = Required.DisallowNull)]
         public string WorkItemType { get; set; }
 
