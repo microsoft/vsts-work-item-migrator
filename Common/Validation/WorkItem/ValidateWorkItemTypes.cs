@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -233,12 +233,12 @@ namespace Common.Validation
             {
                 if (!context.ValidatedFields.Contains(field) && !context.SkippedFields.Contains(field))
                 {
-                    var mappedTargetFieldFound = GetTargetFieldName(context, workItemType, field, out var targetField);
+                    var targetField = GetTargetFieldName(context, workItemType, field, out var targetIsMapped);
                     if (!targetFields.Contains(targetField))
                     {
                         matches = false;
                         context.SkippedFields.Add(field);
-                        if (mappedTargetFieldFound)
+                        if (targetIsMapped)
                         {
                             Logger.LogWarning(LogDestination.File, $"Target field {targetField} does not exist in {workItemType} for Source Field {field}");
                         }
@@ -249,7 +249,7 @@ namespace Common.Validation
                     }
                     else
                     {
-                        matches &= CompareField(context, context.SourceFields[field], context.TargetFields[targetField], mappedTargetFieldFound);
+                        matches &= CompareField(context, context.SourceFields[field], context.TargetFields[targetField], targetIsMapped);
                     }
                 }
             }
@@ -257,43 +257,41 @@ namespace Common.Validation
             return matches;
         }
 
-        private bool GetTargetFieldName(IValidationContext context, string workItemType, string sourceFieldName, out string targetFieldName)
+        private string GetTargetFieldName(IValidationContext context, string workItemType, string sourceFieldName, out bool targetFieldMapped)
         {
             Dictionary<string, TargetFieldMap> replacements = context.Config.FieldReplacements;
+            targetFieldMapped = false;
+            
             if (replacements != null)
             {
+                TargetFieldMap targetFieldMap = null;
                 var typeSpecificReplacementSourceName = $"{workItemType}.{sourceFieldName}";
                 if (replacements.ContainsKeyIgnoringCase(typeSpecificReplacementSourceName))
                 {
-                    TargetFieldMap targetFieldMap = replacements[typeSpecificReplacementSourceName];
-                    if (!string.IsNullOrEmpty(targetFieldMap.FieldReferenceName))
-                    {
-                        targetFieldName = targetFieldMap.FieldReferenceName;
-                        return true;
-                    }
+                    targetFieldMap = replacements[typeSpecificReplacementSourceName];
                 }
                 else if (replacements.ContainsKeyIgnoringCase(sourceFieldName))
                 {
-                    TargetFieldMap targetFieldMap = replacements[sourceFieldName];
-                    if (!string.IsNullOrEmpty(targetFieldMap.FieldReferenceName))
-                    {
-                        targetFieldName = targetFieldMap.FieldReferenceName;
-                        return true;
-                    }
+                    targetFieldMap = replacements[sourceFieldName];
+                }
+
+                if (!string.IsNullOrEmpty(targetFieldMap?.FieldReferenceName))
+                {
+                    targetFieldMapped = true;
+                    return targetFieldMap.FieldReferenceName;
                 }
             }
 
-            targetFieldName = sourceFieldName;
-            return false;
+            return sourceFieldName;
         }
 
-        private bool CompareField(IValidationContext context, WorkItemField source, WorkItemField target, bool isTargetMapped)
+        private bool CompareField(IValidationContext context, WorkItemField source, WorkItemField target, bool isMapped)
         {
             var matches = true;
             if (source.Type != target.Type)
             {
                 matches = false;
-                if (isTargetMapped)
+                if (isMapped)
                 {
                     Logger.LogWarning(LogDestination.File, $"Target field {target.ReferenceName} of type {target.Type} is not of the same type {source.Type} of source field {source.ReferenceName}");
                 }
