@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.Config;
+using Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
-using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
-using Logging;
 using Microsoft.VisualStudio.Services.Common;
-using Common.Config;
+using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 
 namespace Common.Migration
 {
@@ -23,6 +23,11 @@ namespace Common.Migration
 
         public async Task Preprocess(IMigrationContext migrationContext, IBatchMigrationContext batchContext, IList<WorkItem> sourceWorkItems, IList<WorkItem> targetWorkItems)
         {
+            if (migrationContext.Config.MappedWorkItems.Any())
+            {
+                migrationContext.SourceToTargetIds.AddRange(migrationContext.Config.MappedWorkItems.Select(m => new KeyValuePair<int, int>(int.Parse(m.Key), m.Value)));
+            }
+
             var linkedWorkItemArtifactUrls = new HashSet<string>();
             foreach (WorkItem sourceWorkItem in sourceWorkItems)
             {
