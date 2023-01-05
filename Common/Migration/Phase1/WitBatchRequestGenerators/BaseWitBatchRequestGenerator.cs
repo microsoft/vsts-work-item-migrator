@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Common.Config;
+using Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.WebApi.Patch;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
-using Common.Config;
-using Logging;
 
 namespace Common.Migration
 {
@@ -99,9 +99,9 @@ namespace Common.Migration
 
                 if (FieldIsWithinType(sourceField.Key, sourceWorkItemType) && !IsFieldUnsupported(sourceField.Key))
                 {
-                    KeyValuePair<string, object> fieldProcessedForConfigFields = GetTargetField(sourceField, fieldNamesAlreadyPopulated);
+                    KeyValuePair<string, object> fieldProcessedForConfigFields = GetTargetField(sourceWorkItemType, sourceField, fieldNamesAlreadyPopulated);
                     KeyValuePair<string, object> preparedField = UpdateProjectNameIfNeededForField(sourceWorkItem, fieldProcessedForConfigFields);
-                    
+
                     // TEMPORARY HACK for handling emoticons in identity fields:
                     if (this.migrationContext.Config.ClearIdentityDisplayNames)
                     {
@@ -110,7 +110,7 @@ namespace Common.Migration
 
                     // add inline image urls
                     JsonPatchOperation jsonPatchOperation;
-                    if (this.migrationContext.HtmlFieldReferenceNames.Contains(preparedField.Key) 
+                    if (this.migrationContext.HtmlFieldReferenceNames.Contains(preparedField.Key)
                         && preparedField.Value is string)
                     {
                         string updatedHtmlFieldValue = GetUpdatedHtmlField((string)preparedField.Value);
@@ -128,48 +128,71 @@ namespace Common.Migration
             return jsonPatchDocument;
         }
 
-        private string GetTargetFieldName(string sourceFieldName)
+        private string GetTargetFieldName(string workItemType, string sourceFieldName)
         {
-            if (migrationContext.Config.FieldReplacements != null)
+            var field = GetTargetFieldMap(workItemType, sourceFieldName);
+
+            if (!string.IsNullOrEmpty(field?.FieldReferenceName))
             {
-                if (migrationContext.Config.FieldReplacements.ContainsKeyIgnoringCase(sourceFieldName))
-                {
-                    TargetFieldMap targetFieldMap = migrationContext.Config.FieldReplacements[sourceFieldName];
-                    if (!string.IsNullOrEmpty(targetFieldMap.FieldReferenceName))
-                    {
-                        return targetFieldMap.FieldReferenceName;
-                    }
-                }
+                return field.FieldReferenceName;
             }
 
             return sourceFieldName;
         }
 
-        private KeyValuePair<string, object> GetTargetField(KeyValuePair<string, object> sourceField, IList<string> fieldNamesAlreadyPopulated)
+        private TargetFieldMap GetTargetFieldMap(string workItemType, string sourceFieldName)
         {
-            KeyValuePair<string, object> newField = sourceField;
-
-            string sourceFieldName = sourceField.Key;
-            object sourceFieldValue = sourceField.Value;
-
-            if (migrationContext.Config.FieldReplacements != null)
+            var replacements = migrationContext.Config.FieldReplacements;
+            if (replacements != null)
             {
-                if (migrationContext.Config.FieldReplacements.ContainsKeyIgnoringCase(sourceFieldName))
+                var typeSpecificReplacementSourceName = $"{workItemType}.{sourceFieldName}";
+                if (replacements.ContainsKeyIgnoringCase(typeSpecificReplacementSourceName))
                 {
-                    TargetFieldMap targetFieldMap = migrationContext.Config.FieldReplacements[sourceFieldName];
-                    if (targetFieldMap.Value != null)
+                    return replacements[typeSpecificReplacementSourceName];
+                }
+                else if (replacements.ContainsKeyIgnoringCase(sourceFieldName))
+                {
+                    return replacements[sourceFieldName];
+                }
+            }
+
+            return null;
+        }
+
+        private KeyValuePair<string, object> GetTargetField(string sourceWorkItemType, KeyValuePair<string, object> sourceField, IList<string> fieldNamesAlreadyPopulated)
+        {
+            string fieldName = sourceField.Key;
+            object fieldValue = sourceField.Value;
+
+            var targetFieldMap = GetTargetFieldMap(sourceWorkItemType, fieldName);
+
+            if (targetFieldMap != null)
+            {
+                if (!string.IsNullOrEmpty(targetFieldMap.FieldReferenceName))
+                {
+                    fieldName = targetFieldMap.FieldReferenceName; // bring source value to specified target field
+                    fieldNamesAlreadyPopulated.Add(targetFieldMap.FieldReferenceName);
+                }
+
+                if (targetFieldMap.Value != null)
+                {
+                    fieldValue = targetFieldMap.Value; // set targetField to value
+                }
+                else if (fieldValue is string sFieldValue && targetFieldMap.MappingName != null && migrationContext.Config.FieldMappings.ContainsKey(targetFieldMap.MappingName))
+                {
+                    var mapping = migrationContext.Config.FieldMappings[targetFieldMap.MappingName];
+                    if (mapping.ContainsKey(sFieldValue))
                     {
-                        newField = new KeyValuePair<string, object>(sourceFieldName, targetFieldMap.Value); // set targetField to value
+                        fieldValue = mapping[sFieldValue];
                     }
-                    else if (!string.IsNullOrEmpty(targetFieldMap.FieldReferenceName))
+                    else if (mapping.ContainsKey("default"))
                     {
-                        newField = new KeyValuePair<string, object>(targetFieldMap.FieldReferenceName, sourceFieldValue); // bring source value to specified target field
-                        fieldNamesAlreadyPopulated.Add(targetFieldMap.FieldReferenceName);
+                        fieldValue = mapping["default"];
                     }
                 }
             }
 
-            return newField;
+            return new KeyValuePair<string, object>(fieldName, fieldValue);
         }
 
         // TEMPORARY HACK for handling emoticons in identity fields:
@@ -323,7 +346,7 @@ namespace Common.Migration
         /// <returns></returns>
         public bool FieldIsWithinType(string sourceFieldName, string sourceWorkItemType)
         {
-            var targetFieldName = GetTargetFieldName(sourceFieldName);
+            var targetFieldName = GetTargetFieldName(sourceWorkItemType, sourceFieldName);
             ISet<string> fieldsOfKey = this.migrationContext.WorkItemTypes.First(a => a.Key.Equals(sourceWorkItemType, StringComparison.OrdinalIgnoreCase)).Value;
             return fieldsOfKey.Any(a => a.Equals(targetFieldName, StringComparison.OrdinalIgnoreCase));
         }
