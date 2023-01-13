@@ -138,6 +138,9 @@ namespace Common.Validation
                     foreach (var workItem in workItems)
                     {
                         await validator.Validate(context, workItem);
+
+                        // Track iteration paths for sourcework items
+                        context.SourceWorkItemIterationPath[(int)workItem.Id] = workItem.Fields["System.IterationPath"].ToString();
                     }
                 }
 

@@ -17,6 +17,7 @@ namespace Common.Validation
         ISet<string> RequestedFields { get; }
 
         ConcurrentDictionary<int, int> SourceWorkItemRevision { get; set; }
+        ConcurrentDictionary<int, string> SourceWorkItemIterationPath { get; set; }
 
         ConcurrentDictionary<string, WorkItemField> SourceFields { get; set; }
 

@@ -28,6 +28,7 @@
   "target-post-move-tag": "6F078B6C-2A96-453B-A7C3-EACE6E63BB97",
   "skip-work-items-with-type-missing-fields": false,
   "skip-work-items-with-missing-area-path": false,
+  "update-work-items-with-different-iteration-path": false,
   "skip-work-items-with-missing-iteration-path": false,
   "default-area-path": "contoso-project\\missing area path",
   "default-iteration-path": "contoso-project\\missing iteration path",
