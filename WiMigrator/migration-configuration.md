@@ -68,13 +68,48 @@
 
 #### ```log-level-for-file``` minimum log level that will be logged to the file. if omitted, defaults to information. acceptable values from lowest to highest log level: trace, debug, information, warning, error, critical.
 
-#### ```field-replacements```  this can be used for 2 things. the first line in the example below shows how for a source field, we can specify the literal value that its target counterpart will contain. the second line in the example below shows how for a source field, we can specify an existing target field
+#### ```mapped-work-items```  used to list previously (or manually) mapped work items. this helps with linked work items that are not part of this migration.
+```
+"mapped-work-items": { "89312": 8567, "563360": 13444 },
+```
+
+#### ```static-fields```  used to indicate fields that should be filled with a literal value. In the example below, for the `Engagement` work item type, we're setting the `LeadByTeam` field to that value.
+```
+"static-fields": {
+    "Engagement": { "LedByTeam": "Commercial Software Engineering" }
+},
+```
+
+#### ```field-replacements```  this can be used to indicate for source field, we can specify an existing target field, a mapping can also be used to specify a map key that's defined in the `field-mappings` config. Finally, a work item type can be specified using the `specific-to-type` and also prefixing the source field name with that work item type.
 
 ```
 "field-replacements": {
-	"System.Title": { "value": "literalTextForSystemTitle" },
-	"System.Title": { "field-reference-name": "System.Tags" }
+    "Custom.EngagementStatusReasonText": {
+      "field-reference-name": "Custom.EngagementStatusReason"
+    },
+    "System.State": {
+      "field-reference-name": "System.State",
+      "mapping-name": "System.State.Mapping"
+    },
+	 "Engagement.System.Id": {
+      "field-reference-name": "Custom.CSEADOLink",
+      "specific-to-type": "Engagement"
+    }
 }
+```
+
+
+#### ```field-mappings```  used to provided mapping dictionaries that can be used to map literal values for certain fields in the `field-replacements` config.
+```
+ "field-mappings": {
+    "System.State.Mapping": {
+      "01 Exploration": "New",
+      "On Hold": "On Hold",
+      "02 Screen-in": "Active",
+      "Completed": "Completed",
+      "Removed": "Removed"
+    }
+  },
 ```
 
 ```send-email-notification``` when true, will send a run summary email if there are details in the Email Notification Message

@@ -35,7 +35,42 @@
   "ensure-identities": false,
   "include-web-link": true,
   "log-level-for-file": "information",
+  "mapped-work-items": { "89312": 8567, "563360": 13444 },
+  "static-fields": {
+    "Engagement": { "Custom.LedByTeam": "Commercial Software Engineering" }
+  },
   "field-replacements": {
+    "Engagement.System.Id": {
+      "field-reference-name": "Custom.CSEADOLink",
+      "specific-to-type": "Engagement"
+    },
+    "Custom.EngagementStatusReasonText": {
+      "field-reference-name": "Custom.EngagementStatusReason"
+    },
+    "Custom.CatcherEntity": {
+      "field-reference-name": "Custom.CatcherEntity",
+      "mapping-name": "Custom.CatcherEntity.Mapping"
+    },
+    "Engagement.System.State": {
+      "field-reference-name": "System.State",
+      "mapping-name": "Engagement.System.State.Mapping",
+      "specific-to-type": "Engagement"
+    }
+  },
+  "field-mappings": {
+    "Engagement.System.State.Mapping": {
+      "01 Exploration": "New",
+      "On Hold": "On Hold",
+      "02 Screen-in": "Active",
+      "03 ADS": "Active",
+      "04 Sprints": "Active",
+      "05 Handoff": "Active",
+      "06 Release": "Active",
+      "Withdrawn by MS": "Withdrawn",
+      "Withdrawn by Customer": "Withdrawn",
+      "Completed": "Completed",
+      "Removed": "Removed"
+    }
   },
   "send-email-notification": true,
   "email-notification": {
@@ -45,9 +80,6 @@
     "from-address": "wimigrator@example.com",
     "user-name": "un",
     "password": "pw",
-    "recipient-addresses": [
-      "test1@test.com",
-      "test2@test.com"
-    ]
+    "recipient-addresses": ["test1@test.com", "test2@test.com"]
   }
 }
