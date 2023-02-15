@@ -1,0 +1,284 @@
+{
+  "source-connection": {
+    "account": "https://csefy19.visualstudio.com",
+    "project": "CSEng Demo",
+    "access-token": "<your-pat-here>",
+    "use-integrated-auth": "false"
+  },
+  "target-connection": {
+    "account": "https://dev.azure.com/IndustrySolutions",
+    "project": "IS Engagements Demo",
+    "access-token": "<your-pat-here>",
+    "use-integrated-auth": "false"
+  },
+  "query": "My Queries/Should Migrate",
+  "heartbeat-frequency-in-seconds": 30,
+  "query-page-size": 20000,
+  "parallelism": 1,
+  "max-attachment-size": 62914560,
+  "link-parallelism": 1,
+  "attachment-upload-chunk-size": 1048576,
+  "skip-existing": true,
+  "move-history": true,
+  "move-history-limit": 200,
+  "move-git-links": true,
+  "move-attachments": true,
+  "move-links": true,
+  "source-post-move-tag": "",
+  "target-post-move-tag": "new-item",
+  "skip-work-items-with-type-missing-fields": false,
+  "skip-work-items-with-missing-area-path": false,
+  "skip-work-items-with-missing-iteration-path": false,
+  "default-area-path": "IS Engagements Demo",
+  "default-iteration-path": "IS Engagements Demo",
+  "clear-identity-display-names": false,
+  "ensure-identities": false,
+  "include-web-link": true,
+  "log-level-for-file": "information",
+  "static-fields": {
+    "Engagement": { "Custom.LedByTeam": "Commercial Software Engineering" }
+  },
+  "mapped-work-items": {
+    "242804": 8091,
+    "238623": 8162,
+    "389376": 8206,
+    "238640": 8379,
+    "193624": 8396,
+    "238650": 8435,
+    "238730": 8444,
+    "238667": 8614,
+    "382323": 8622,
+    "238382": 8637,
+    "238721": 8834,
+    "87092": 8840,
+    "460233": 9284,
+    "238718": 9285,
+    "238482": 9513,
+    "239554": 9692,
+    "238705": 9761,
+    "238737": 9797,
+    "238547": 9952,
+    "238354": 10044,
+    "563360": 13444
+  },
+  "field-replacements": {
+    "Engagement.System.Id": {
+      "field-reference-name": "Custom.CSEADOLink",
+      "specific-to-type": "Engagement"
+    },
+    "System.Title": { "field-reference-name": "System.Title" },
+    "System.Description": { "field-reference-name": "System.Description" },
+    "Custom.ExecSummary": {
+      "field-reference-name": "Custom.EngagementExecutiveSummary"
+    },
+    "Custom.EngagementStatusReasonText": {
+      "field-reference-name": "Custom.EngagementStatusReason"
+    },
+    "CSEngineering-V2.EngagementStartDate": {
+      "field-reference-name": "Custom.EngagementStartDate"
+    },
+    "CSEngineering-V2.EngagementEndDate": {
+      "field-reference-name": "Custom.EngagementEndDate"
+    },
+    "CSEngineering-V2.AetherStatus": {
+      "field-reference-name": "Custom.AetherStatus"
+    },
+    "CSEngineering-V2.City": { "field-reference-name": "Custom.City" },
+    "CSEngineering-V2.CountrySelection": {
+      "field-reference-name": "Custom.Country"
+    },
+    "Custom.Region": { "field-reference-name": "Custom.Region" },
+    "CSEngineering-V2-Orgs.ExecutiveEscalation": {
+      "field-reference-name": "Custom.ExecutiveAsk"
+    },
+    "Custom.ExecutiveEscalating": {
+      "field-reference-name": "Custom.ExecutiveAsking"
+    },
+    "Custom.MSXOpportunityID": {
+      "field-reference-name": "Custom.MSXOpportunityID"
+    },
+    "Custom.PriorityIndex": { "field-reference-name": "custom.priorityindex" },
+    "Custom.VMSTotal": { "field-reference-name": "Custom.ValueMarker1" },
+    "Custom.RMSTotal": { "field-reference-name": "Custom.RiskMarker1" },
+    "Custom.ProductGroup": { "field-reference-name": "Custom.ProductGroup" },
+    "Custom.TechnologyDomains": {
+      "field-reference-name": "Custom.TechDomains"
+    },
+    "CSEngineering-V2.AssignedPM": { "field-reference-name": "Custom.PMOPM" },
+    "CSEngineering-V2.SEIorSEDWR": { "field-reference-name": "Custom.TPM" },
+    "Custom.EngagementDevLead": {
+      "field-reference-name": "Custom.EngagementDevLead"
+    },
+    "Custom.CSA": { "field-reference-name": "Custom.CSA" },
+    "CSEngineering-V2-Orgs.NDAStatus": {
+      "field-reference-name": "Custom.NDAStatus"
+    },
+    "CSEngineering-V2-Orgs.MasterTEAStatus": {
+      "field-reference-name": "Custom.MasterContractStatus"
+    },
+    "Custom.MasterContractType": {
+      "field-reference-name": "Custom.MasterContractType"
+    },
+    "CSEngineering-V2.EngagementLegalDetails": {
+      "field-reference-name": "Custom.ProjectLegalDetails"
+    },
+    "CSEngineering-V2.EngagementTEAType": {
+      "field-reference-name": "Custom.ProjectContactType"
+    },
+    "CSEngineering-V2.EngagementTEAStatus": {
+      "field-reference-name": "Custom.ProjectContractStatus"
+    },
+    "CSEngineering-V2.EngagementTEAContractID": {
+      "field-reference-name": "Custom.ProjectContractID"
+    },
+    "CSEngineering-V2.EngagementTEAEffectiveDate": {
+      "field-reference-name": "Custom.ProjectContractEffectiveDate"
+    },
+    "CSEngineering-V2.EngagementTEAExpirationDate": {
+      "field-reference-name": "Custom.ProjectContractExpirationDate"
+    },
+    "CSEngineering-V2-Orgs.CSEIndustry": {
+      "field-reference-name": "Custom.Industry"
+    },
+    "Custom.IndustryPriorityScenariosFY22": {
+      "field-reference-name": "Custom.IndustryPriorityScenario"
+    },
+    "Engagement.System.State": {
+      "field-reference-name": "System.State",
+      "mapping-name": "Engagement.System.State.Mapping",
+      "specific-to-type": "Engagement"
+    },
+    "CSEngineering-V2.OverallStatus": {
+      "field-reference-name": "Custom.EngagementStatus",
+      "mapping-name": "CSEngineering-V2.OverallStatus.Mapping"
+    },
+    "Custom.TechTags": {
+      "field-reference-name": "Custom.TechScenarios",
+      "mapping-name": "Custom.TechTags.Mapping"
+    },
+    "Custom.CatcherEntity": {
+      "field-reference-name": "Custom.CatcherEntity",
+      "mapping-name": "Custom.CatcherEntity.Mapping"
+    },
+    "Custom.CatcherSystemIntegrator": {
+      "field-reference-name": "Custom.CatcherSystemIntegratorUpdate"
+    },
+    "CSEngineering-V2.EngagementType": {
+      "field-reference-name": "Custom.CSEEngagementType",
+      "mapping-name": "CSEngineering-V2.EngagementType.Mapping"
+    },
+    "Custom.ProductionTarget": {
+      "field-reference-name": "Custom.ProductionTarget",
+      "mapping-name": "Custom.ProductionTarget.Mapping"
+    },
+    "Engagement.CSEngineering-V2.EngagementDevCrew": {
+      "field-reference-name": "Custom.LedByTeam",
+      "value": "Commercial Software Engineering",
+      "specific-to-type": "Engagement"
+    },
+    "Resource Request.System.State": {
+      "field-reference-name": "System.State",
+      "mapping-name": "Resource Request.System.State.Mapping",
+      "specific-to-type": "Resource Request"
+    },
+    "Custom.ResourceRequestType": {
+      "field-reference-name": "Custom.ISResourceRequestType",
+      "mapping-name": "Custom.ResourceRequestType.Mapping"
+    },
+    "Custom.SMEType": {
+      "field-reference-name": "Custom.ISServicesRequested",
+      "mapping-name": "Custom.SMEType.Mapping"
+    },
+    "Custom.Language": {
+      "field-reference-name": "Custom.RequiredSpokenLanguagenotincludingEnglish"
+    },
+    "Custom.CTETokenStartDate": {
+      "field-reference-name": "Custom.ForecastedResourcesStartDate"
+    },
+    "Custom.CTETokenEndDate": {
+      "field-reference-name": "Custom.ForecastedResourcesEndDate"
+    },
+    "Custom.ScreenInDevManager": {
+      "field-reference-name": "Custom.DevManager"
+    },
+    "Custom.ScreenInTPMManager": {
+      "field-reference-name": "Custom.TPMManager"
+    },
+    "Custom.ScreenInDASManager": {
+      "field-reference-name": "Custom.DandASManager"
+    },
+    "Custom.ScreenInSALead": { "field-reference-name": "Custom.SALead" },
+    "Custom.ScreenInPMOPM": { "field-reference-name": "Custom.PMOPM" },
+    "Resource Request.CSEngineering-V2.EngagementDevCrew": {
+      "field-reference-name": "Custom.DevCrewAssigned",
+      "specific-to-type": "Resource Request"
+    },
+    "Custom.StateNotes": {
+      "field-reference-name": "Custom.AssignmentStateNotes"
+    }
+  },
+  "field-mappings": {
+    "Engagement.System.State.Mapping": {
+      "01 Exploration": "New",
+      "On Hold": "On Hold",
+      "02 Screen-in": "Active",
+      "03 ADS": "Active",
+      "04 Sprints": "Active",
+      "05 Handoff": "Active",
+      "06 Release": "Active",
+      "Withdrawn by MS": "Withdrawn",
+      "Withdrawn by Customer": "Withdrawn",
+      "Completed": "Completed",
+      "Removed": "Removed"
+    },
+    "CSEngineering-V2.OverallStatus.Mapping": {
+      "Not Engagement (Gray)": "Not Engaged (Grey)"
+    },
+    "Custom.TechTags.Mapping": {},
+    "Custom.CatcherEntity.Mapping": {
+      "Customer": "Customer",
+      "MSFT Product Group": "Microsoft Product Group",
+      "Other": "Other",
+      "System Integrator": "Partner",
+      "ISV": "Partner"
+    },
+    "CSEngineering-V2.EngagementType.Mapping": {
+      "Code For": "Code For ",
+      "Code with": "Code With",
+      "": "Customer Patterns",
+      "Engineer Escalation": "Engineer for Reuse",
+      "Scenario": "Scenario"
+    },
+    "Custom.ProductionTarget.Mapping": {},
+    "Resource Request.System.State.Mapping": {
+      "01 Draft": "01 Draft",
+      "02 Active Request": "02 Submitted",
+      "03 Screening": "03 Screening",
+      "04 Backlog - Info Requested": "03 Screening",
+      "04 Backlog - In Review;": "03 Screening",
+      "04 Filled; Closed": "04 Filled",
+      "Removed": "Removed",
+      "Withdrawn": "Withdrawn"
+    },
+    "Custom.ResourceRequestType.Mapping": {
+      "Additional Dev Crew": "Dev Crew",
+      "SME - Coding": "SME",
+      "SME - Non-Coding": "SME"
+    },
+    "Custom.SMEType.Mapping": {
+      "Additional Dev Crew": "CSE",
+      "SME - Coding": "SME - Coding",
+      "SME - Non-Coding": "SME - Non-Coding"
+    }
+  },
+  "send-email-notification": false,
+  "email-notification": {
+    "smtp-server": "127.0.0.1",
+    "use-ssl": false,
+    "port": "25",
+    "from-address": "wimigrator@example.com",
+    "user-name": "un",
+    "password": "pw",
+    "recipient-addresses": ["test1@test.com", "test2@test.com"]
+  }
+}
