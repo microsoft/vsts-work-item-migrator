@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.ApiWrappers;
+using Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 using Newtonsoft.Json;
-using Common.ApiWrappers;
-using Logging;
 
 namespace Common.Migration
 {
@@ -219,6 +219,13 @@ namespace Common.Migration
                     var link = (ReferenceLink)sourceWorkItem.Links.Links["html"];
                     var addWebLinkOperation = MigrationHelpers.GetHyperlinkAddOperation(link.Href);
                     jsonPatchOperations.Add(addWebLinkOperation);
+                }
+
+                // copy hyperlinks
+                foreach (var relation in sourceWorkItem.Relations.Where(r => r.Rel.Equals(Constants.Hyperlink, StringComparison.OrdinalIgnoreCase)))
+                {
+                    var hyperlink = MigrationHelpers.GetHyperlinkAddOperation(relation.Url);
+                    jsonPatchOperations.Add(hyperlink);
                 }
 
                 if (jsonPatchOperations.Any())
