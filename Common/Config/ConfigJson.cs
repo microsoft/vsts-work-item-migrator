@@ -98,6 +98,9 @@ namespace Common.Config
         [DefaultValue(false)]
         public bool IncludeWebLink { get; set; }
 
+        [JsonProperty(PropertyName = "hyper-links-excludes", DefaultValueHandling = DefaultValueHandling.Populate)]
+        public List<string> HyperLinkExcludes { get; set; }
+
         [JsonProperty(PropertyName = "log-level-for-file", DefaultValueHandling = DefaultValueHandling.Populate)]
         [DefaultValue(LogLevel.Information)]
         public LogLevel LogLevelForFile { get; set; }

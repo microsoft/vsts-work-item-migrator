@@ -66,6 +66,12 @@
 
 #### ```include-web-link``` when true, will include the web link in addition to the REST link for the source work item on the target.
 
+#### ```hyper-links-excludes``` can be used to filter out hyperlinks based on the provided excluded words list. For example, the following config will exclude any hyperlink that contains google.com or yahoo.com from being migrated.
+
+```
+  "hyper-links-excludes": ["google.com", "yahoo.com"],
+```
+
 #### ```log-level-for-file``` minimum log level that will be logged to the file. if omitted, defaults to information. acceptable values from lowest to highest log level: trace, debug, information, warning, error, critical.
 
 #### ```mapped-work-items```  used to list previously (or manually) mapped work items. this helps with linked work items that are not part of this migration.

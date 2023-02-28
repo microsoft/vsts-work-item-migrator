@@ -34,6 +34,7 @@
   "clear-identity-display-names": false,
   "ensure-identities": false,
   "include-web-link": true,
+  "hyper-links-excludes": ["google.com", "yahoo.com"],
   "log-level-for-file": "information",
   "static-fields": {
     "Engagement": { "Custom.LedByTeam": "Commercial Software Engineering" }

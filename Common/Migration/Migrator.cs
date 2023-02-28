@@ -224,6 +224,12 @@ namespace Common.Migration
                 // copy hyperlinks
                 foreach (var relation in sourceWorkItem.Relations.Where(r => r.Rel.Equals(Constants.Hyperlink, StringComparison.OrdinalIgnoreCase)))
                 {
+                    // skip if the hyperlink is in the exclude list
+                    if (this.context.Config.HyperLinkExcludes.Any(e => relation.Url.IndexOf(e, StringComparison.OrdinalIgnoreCase) >= 0))
+                    {
+                        continue;
+                    }
+
                     var hyperlink = MigrationHelpers.GetHyperlinkAddOperation(relation.Url);
                     jsonPatchOperations.Add(hyperlink);
                 }
