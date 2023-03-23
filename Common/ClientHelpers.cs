@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -97,6 +97,19 @@ namespace Common
             return await WorkItemTrackingHelpers.GetIdsForUrisAsync(client, artifactUriQuery);
         }
         
+        public static async Task<WorkItemQueryResult> QueryProjectToGetIds(WorkItemTrackingHttpClient client, string project, ArtifactUriQueryResult queryResult)
+        {
+
+            var ids = queryResult.ArtifactUrisQueryResult.SelectMany(x => x.Value).Select(x => x.Id).ToList();
+
+            var query = new Wiql()
+            {
+                Query = $"Select [System.Id] From WorkItems Where [System.TeamProject] = '{project}' AND [System.Id] In ({string.Join(",", ids)})",
+            };
+
+            return await WorkItemTrackingHelpers.GetIdsForQueryAsync(client, query);
+        }
+
         public static bool GetMigratedWorkItemId(ArtifactUriQueryResult queryResult, KeyValuePair<int, string> workItem, out int id)
         {
             IEnumerable<WorkItemReference> link = null;

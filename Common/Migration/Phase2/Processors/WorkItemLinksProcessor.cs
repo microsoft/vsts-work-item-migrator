@@ -41,11 +41,13 @@ namespace Common.Migration
             {
                 Logger.LogTrace(LogDestination.File, $"Finding linked work items on target for batch {batchId}");
                 var results = await ClientHelpers.QueryArtifactUriToGetIdsFromUris(migrationContext.TargetClient.WorkItemTrackingHttpClient, workItemArtifactUris);
+                var resultsWorkItems = await ClientHelpers.QueryProjectToGetIds(migrationContext.TargetClient.WorkItemTrackingHttpClient, migrationContext.Config.TargetConnection.Project, results);
+
                 foreach (var result in results.ArtifactUrisQueryResult)
                 {
                     if (result.Value != null)
                     {
-                        if (result.Value.Count() == 1)
+                        if (result.Value.Count() == 1 && resultsWorkItems.WorkItems.Any(w => w.Id == result.Value.First().Id))
                         {
                             var sourceId = ClientHelpers.GetWorkItemIdFromApiEndpoint(result.Key);
                             var targetId = result.Value.First().Id;

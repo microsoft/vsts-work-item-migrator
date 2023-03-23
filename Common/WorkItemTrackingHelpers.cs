@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -324,6 +324,14 @@ namespace Common
             return await RetryHelper.RetryAsync(async () =>
              {
                  return await client.QueryWorkItemsForArtifactUrisAsync(query);
+             }, 5);
+        }
+
+        public async static Task<WorkItemQueryResult> GetIdsForQueryAsync(WorkItemTrackingHttpClient client, Wiql wiql)
+        {
+            return await RetryHelper.RetryAsync(async () =>
+             {
+                 return await client.QueryByWiqlAsync(wiql);
              }, 5);
         }
     }
