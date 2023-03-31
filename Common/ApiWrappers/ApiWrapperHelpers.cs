@@ -122,7 +122,7 @@ namespace Common.ApiWrappers
                 var anyWorkItemsCreated = false;
                 foreach (var idToUri in migrationContext.WorkItemIdsUris.Where(w => sourceIds.Contains(w.Key)))
                 {
-                    if (ClientHelpers.GetMigratedWorkItemId(queryResult, idToUri, out int migratedId))
+                    if (ClientHelpers.GetMigratedWorkItemId(queryResult, idToUri, null, out int migratedId))
                     {
                         anyWorkItemsCreated = true;
                     }

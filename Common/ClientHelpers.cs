@@ -115,13 +115,17 @@ namespace Common
             return await WorkItemTrackingHelpers.GetIdsForQueryAsync(client, query);
         }
 
-        public static bool GetMigratedWorkItemId(ArtifactUriQueryResult queryResult, KeyValuePair<int, string> workItem, out int id)
+        public static bool GetMigratedWorkItemId(ArtifactUriQueryResult queryResult, KeyValuePair<int, string> workItem, IList<int> projectsWorkItemsIds, out int id)
         {
             IEnumerable<WorkItemReference> link = null;
             id = 0;
             if (queryResult.ArtifactUrisQueryResult.ContainsKey(workItem.Value))
             {
                 link = queryResult.ArtifactUrisQueryResult[workItem.Value];
+                if (projectsWorkItemsIds != null)
+                {
+                    link = link.Where(l => projectsWorkItemsIds.Contains(l.Id));
+                }
                 if (link.Count() > 1)
                 {
                     throw new Exception($"Found more than one work item with link {workItem.Value} in the target for workitem {workItem.Key}");

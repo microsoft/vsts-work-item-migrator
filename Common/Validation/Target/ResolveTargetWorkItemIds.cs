@@ -63,7 +63,8 @@ namespace Common.Validation
             // do a check to see if any of them have already been migrated
             var artifactUris = workItems.Select(a => a.Value).ToList();
             var result = await ClientHelpers.QueryArtifactUriToGetIdsFromUris(client, artifactUris);
-            var resultsWorkItems = await ClientHelpers.QueryProjectToGetIds(client, context.Config.TargetConnection.Project, result);
+            var projectsWorkItems = await ClientHelpers.QueryProjectToGetIds(client, context.Config.TargetConnection.Project, result);
+            var projectsWorkItemsIds = projectsWorkItems.WorkItems.Select(w => w.Id).ToList();
 
             IList<WorkItemMigrationState> workItemStateList = new List<WorkItemMigrationState>();
 
@@ -72,7 +73,7 @@ namespace Common.Validation
             {
                 try
                 {
-                    if (ClientHelpers.GetMigratedWorkItemId(result, workItem, out int id) && resultsWorkItems.WorkItems.Any(w => w.Id == id))
+                    if (ClientHelpers.GetMigratedWorkItemId(result, workItem, projectsWorkItemsIds, out int id))
                     {
                         workItemStateList.Add(new WorkItemMigrationState { SourceId = workItem.Key, TargetId = id, MigrationState = WorkItemMigrationState.State.Existing });
                     }
