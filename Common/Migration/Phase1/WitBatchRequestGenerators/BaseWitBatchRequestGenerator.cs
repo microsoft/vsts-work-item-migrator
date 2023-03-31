@@ -180,8 +180,11 @@ namespace Common.Migration
                     fieldNamesAlreadyPopulated.Add(targetFieldMap.FieldReferenceName);
                 }
 
-                if (fieldValue is string sFieldValue && targetFieldMap.MappingName != null && migrationContext.Config.FieldMappings.ContainsKey(targetFieldMap.MappingName))
+               // if (fieldValue is string sFieldValue && targetFieldMap.MappingName != null && migrationContext.Config.FieldMappings.ContainsKey(targetFieldMap.MappingName))
+                if (fieldValue !=null && targetFieldMap.MappingName !=null && migrationContext.Config.FieldMappings.ContainsKey(targetFieldMap.MappingName))
                 {
+                    string sFieldValue = fieldValue.ToString();
+
                     var mapping = migrationContext.Config.FieldMappings[targetFieldMap.MappingName];
                     if (mapping.ContainsKey(sFieldValue))
                     {

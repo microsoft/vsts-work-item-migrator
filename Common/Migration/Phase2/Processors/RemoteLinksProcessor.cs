@@ -14,7 +14,6 @@ namespace Common.Migration
     public class RemoteLinksProcessor : IPhase2Processor
     {
         private static ILogger Logger { get; } = MigratorLogging.CreateLogger<RemoteLinksProcessor>();
-
         public string Name => Constants.RelationPhaseRemoteLinks;
 
         public bool IsEnabled(ConfigJson config)
@@ -32,35 +31,70 @@ namespace Common.Migration
             IList<JsonPatchOperation> jsonPatchOperations = new List<JsonPatchOperation>();
             IEnumerable<WorkItemRelation> sourceRemoteLinks = sourceWorkItem.Relations?.Where(r => RelationHelpers.IsRemoteLinkType(migrationContext, r.Rel));
 
-            if (sourceRemoteLinks != null && sourceRemoteLinks.Any())
+            if (sourceRemoteLinks != null && sourceRemoteLinks.Any()) 
             {
-                foreach (WorkItemRelation sourceRemoteLink in sourceRemoteLinks)
+                if (migrationContext.Config.MigrateRemoteLinkAsHyperLink) // save remote link as hyperlink
                 {
-                    string url = ConvertRemoteLinkToHyperlink(sourceRemoteLink.Url);
-                    WorkItemRelation targetRemoteLinkHyperlinkRelation = GetHyperlinkIfExistsOnTarget(targetWorkItem, url);
+                    foreach (WorkItemRelation sourceRemoteLink in sourceRemoteLinks)
+                    {
+                        string url = ConvertRemoteLinkToHyperlink(sourceRemoteLink.Url);
+                        WorkItemRelation targetRemoteLinkHyperlinkRelation = GetHyperlinkIfExistsOnTarget(targetWorkItem, url);
 
-                    if (targetRemoteLinkHyperlinkRelation != null) // is on target
-                    {
-                        JsonPatchOperation remoteLinkHyperlinkAddOperation = MigrationHelpers.GetRelationAddOperation(targetRemoteLinkHyperlinkRelation);
-                        jsonPatchOperations.Add(remoteLinkHyperlinkAddOperation);
-                    }
-                    else // is not on target
-                    {
-                        string comment = string.Empty;
-                        if (sourceRemoteLink.Attributes.ContainsKey(Constants.RelationAttributeComment))
+                        if (targetRemoteLinkHyperlinkRelation != null) // is on target
                         {
-                            comment = $"{sourceRemoteLink.Attributes[Constants.RelationAttributeComment]}";
+                            JsonPatchOperation remoteLinkHyperlinkAddOperation = MigrationHelpers.GetRelationAddOperation(targetRemoteLinkHyperlinkRelation);
+                            jsonPatchOperations.Add(remoteLinkHyperlinkAddOperation);
                         }
+                        else // is not on target
+                        {
+                            string comment = string.Empty;
+                            if (sourceRemoteLink.Attributes.ContainsKey(Constants.RelationAttributeComment))
+                            {
+                                comment = $"{sourceRemoteLink.Attributes[Constants.RelationAttributeComment]}";
+                            }
 
-                        WorkItemRelation newRemoteLinkHyperlinkRelation = new WorkItemRelation();
-                        newRemoteLinkHyperlinkRelation.Rel = Constants.Hyperlink;
-                        newRemoteLinkHyperlinkRelation.Url = url;
-                        newRemoteLinkHyperlinkRelation.Attributes = new Dictionary<string, object>();
-                        newRemoteLinkHyperlinkRelation.Attributes[Constants.RelationAttributeComment] = comment;
+                            WorkItemRelation newRemoteLinkHyperlinkRelation = new WorkItemRelation();
+                            newRemoteLinkHyperlinkRelation.Rel = Constants.Hyperlink;
+                            newRemoteLinkHyperlinkRelation.Url = url;
+                            newRemoteLinkHyperlinkRelation.Attributes = new Dictionary<string, object>();
+                            newRemoteLinkHyperlinkRelation.Attributes[Constants.RelationAttributeComment] = comment;
 
-                        JsonPatchOperation remoteLinkHyperlinkAddOperation = MigrationHelpers.GetRelationAddOperation(newRemoteLinkHyperlinkRelation);
-                        jsonPatchOperations.Add(remoteLinkHyperlinkAddOperation);
+                            JsonPatchOperation remoteLinkHyperlinkAddOperation = MigrationHelpers.GetRelationAddOperation(newRemoteLinkHyperlinkRelation);
+                            jsonPatchOperations.Add(remoteLinkHyperlinkAddOperation);
+                        }
                     }
+                }
+                else // save remote link as remote link
+                {
+                    foreach (WorkItemRelation sourceRemoteLink in sourceRemoteLinks)
+                    {
+
+                        if (sourceRemoteLink.Url.Contains(migrationContext.Config.TargetConnection.Account)) // exclude same organization
+                        {
+                            string url = ConvertRemoteLinkToHyperlink(sourceRemoteLink.Url);
+                            WorkItemRelation targetRemoteLinkHyperlinkRelation = GetHyperlinkIfExistsOnTarget(targetWorkItem, url);
+                            
+                            WorkItemRelation newRemoteLinkHyperlinkRelation = new WorkItemRelation();
+                            newRemoteLinkHyperlinkRelation.Rel = Constants.Hyperlink;
+                            newRemoteLinkHyperlinkRelation.Url = url;
+                            newRemoteLinkHyperlinkRelation.Attributes = new Dictionary<string, object>();
+
+                            JsonPatchOperation remoteLinkHyperlinkAddOperation = MigrationHelpers.GetRelationAddOperation(newRemoteLinkHyperlinkRelation);
+                            jsonPatchOperations.Add(remoteLinkHyperlinkAddOperation);
+                        }
+                        else // is not on target
+                        {
+                            JsonPatchOperation remoteLinkHyperlinkAddOperation = MigrationHelpers.GetRelationAddOperation(sourceRemoteLink);
+                            jsonPatchOperations.Add(remoteLinkHyperlinkAddOperation);
+                        }
+                    }
+                
+                //    backup
+                //    foreach (WorkItemRelation sourceRemoteLink in sourceRemoteLinks)
+                //    {
+                //        JsonPatchOperation remoteLinkHyperlinkAddOperation = MigrationHelpers.GetRelationAddOperation(sourceRemoteLink);
+                //        jsonPatchOperations.Add(remoteLinkHyperlinkAddOperation);
+                //    }
                 }
             }
 
@@ -84,6 +118,7 @@ namespace Common.Migration
 
             return null;
         }
+        
 
         /// <summary>
         /// Remote links returned refer to the REST reference, and we want the web reference.

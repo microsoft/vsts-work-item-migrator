@@ -8,6 +8,7 @@ namespace Common
         public const int PageSize = 200;
 
         public const string Hyperlink = "Hyperlink";
+        public const string Related = "Related";
         public const string AttachedFile = "AttachedFile";
         public const string WorkItemHistory = "WorkItemHistory";
         public const string RelationAttributeName = "name";

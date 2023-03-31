@@ -101,6 +101,10 @@ namespace Common.Config
         [JsonProperty(PropertyName = "hyper-links-excludes", DefaultValueHandling = DefaultValueHandling.Populate)]
         public List<string> HyperLinkExcludes { get; set; }
 
+        [JsonProperty(PropertyName = "migrate-remote-link-as-hyperlink", DefaultValueHandling = DefaultValueHandling.Populate)]
+        [DefaultValue(false)]
+        public bool MigrateRemoteLinkAsHyperLink { get; set; }
+
         [JsonProperty(PropertyName = "log-level-for-file", DefaultValueHandling = DefaultValueHandling.Populate)]
         [DefaultValue(LogLevel.Information)]
         public LogLevel LogLevelForFile { get; set; }
