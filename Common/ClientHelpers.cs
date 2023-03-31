@@ -102,6 +102,11 @@ namespace Common
 
             var ids = queryResult.ArtifactUrisQueryResult.SelectMany(x => x.Value).Select(x => x.Id).ToList();
 
+            if (!ids.Any())
+            {
+                return new WorkItemQueryResult() { WorkItems = new List<WorkItemReference>() };
+            }
+
             var query = new Wiql()
             {
                 Query = $"Select [System.Id] From WorkItems Where [System.TeamProject] = '{project}' AND [System.Id] In ({string.Join(",", ids)})",
