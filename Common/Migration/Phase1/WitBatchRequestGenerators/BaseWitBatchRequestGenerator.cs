@@ -204,7 +204,7 @@ namespace Common.Migration
         protected KeyValuePair<string, object> RemoveEmojis(KeyValuePair<string, object> sourceField, KeyValuePair<string, object> targetField)
         {
             if (targetField.Value is string
-                && this.migrationContext.IdentityFields.Contains(sourceField.Key))
+                && this.migrationContext.IdentityFields.Contains(targetField.Key))
             {
                 string targetFieldValueString = targetField.Value as string;
 

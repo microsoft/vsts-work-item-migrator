@@ -25,7 +25,9 @@ namespace Common.Migration
         {
             if (migrationContext.Config.MappedWorkItems.Any())
             {
-                migrationContext.SourceToTargetIds.AddRange(migrationContext.Config.MappedWorkItems.Select(m => new KeyValuePair<int, int>(int.Parse(m.Key), m.Value)));
+                var configMapped = migrationContext.Config.MappedWorkItems.Select(m => new KeyValuePair<int, int>(int.Parse(m.Key), m.Value));
+                configMapped = configMapped.Where(m => !migrationContext.SourceToTargetIds.ContainsKey(m.Key));
+                migrationContext.SourceToTargetIds.AddRange(configMapped);
             }
 
             var linkedWorkItemArtifactUrls = new HashSet<string>();
