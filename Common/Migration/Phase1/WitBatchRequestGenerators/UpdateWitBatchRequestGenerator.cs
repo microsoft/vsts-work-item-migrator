@@ -69,5 +69,10 @@ namespace Common.Migration
 
             return witBatchRequest;
         }
+
+        public override bool IsFieldUnsupported(string fieldRefName)
+        {
+            return fieldRefName == FieldNames.ChangedDate || base.IsFieldUnsupported(fieldRefName);
+        }
     }
 }

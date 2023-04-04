@@ -180,8 +180,8 @@ namespace Common.Migration
                     fieldNamesAlreadyPopulated.Add(targetFieldMap.FieldReferenceName);
                 }
 
-               // if (fieldValue is string sFieldValue && targetFieldMap.MappingName != null && migrationContext.Config.FieldMappings.ContainsKey(targetFieldMap.MappingName))
-                if (fieldValue !=null && targetFieldMap.MappingName !=null && migrationContext.Config.FieldMappings.ContainsKey(targetFieldMap.MappingName))
+                // if (fieldValue is string sFieldValue && targetFieldMap.MappingName != null && migrationContext.Config.FieldMappings.ContainsKey(targetFieldMap.MappingName))
+                if (fieldValue != null && targetFieldMap.MappingName != null && migrationContext.Config.FieldMappings.ContainsKey(targetFieldMap.MappingName))
                 {
                     string sFieldValue = fieldValue.ToString();
 
@@ -338,7 +338,7 @@ namespace Common.Migration
             return this.migrationContext.FieldsThatRequireSourceProjectToBeReplacedWithTargetProject.Any(a => a.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
         }
 
-        public bool IsFieldUnsupported(string fieldRefName)
+        public virtual bool IsFieldUnsupported(string fieldRefName)
         {
             return this.migrationContext.UnsupportedFields.Any(a => fieldRefName.IndexOf(a, StringComparison.OrdinalIgnoreCase) >= 0);
         }
