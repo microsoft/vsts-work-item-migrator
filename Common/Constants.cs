@@ -39,6 +39,7 @@ namespace Common
         public const string RelationPhaseGitCommitLinks = "git commit links";
         public const string RelationPhaseRevisionHistoryAttachments = "revision history attachments";
         public const string RelationPhaseWorkItemLinks = "work item links";
+        public const string RelationPhaseHyperLinks = "hyperlinks";
         public const string RelationPhaseRemoteLinks = "remote work item links";
         public const string RelationPhaseSourcePostMoveTags = "source post move tags";
         public const string RelationPhaseTargetPostMoveTags = "target post move tags";

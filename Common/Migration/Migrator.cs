@@ -221,30 +221,6 @@ namespace Common.Migration
                     jsonPatchOperations.Add(addWebLinkOperation);
                 }
 
-                // copy hyperlinks
-                foreach (var sourceHyperLink in sourceWorkItem.Relations.Where(r => r.Rel.Equals(Constants.Hyperlink, StringComparison.OrdinalIgnoreCase)))
-                {
-                    // skip if the hyperlink is in the exclude list
-                    if (context.Config.HyperLinkExcludes.Any(e => sourceHyperLink.Url.IndexOf(e, StringComparison.OrdinalIgnoreCase) >= 0))
-                    {
-                        continue;
-                    }
-
-                    var url = sourceHyperLink.Url;
-                    WorkItemRelation targetRemoteLinkHyperlinkRelation = GetHyperlinkIfExistsOnTarget(targetWorkItem, url);
-
-                    if (targetRemoteLinkHyperlinkRelation != null) // is on target
-                    {
-                        JsonPatchOperation remoteLinkHyperlinkAddOperation = MigrationHelpers.GetRelationAddOperation(targetRemoteLinkHyperlinkRelation);
-                        jsonPatchOperations.Add(remoteLinkHyperlinkAddOperation);
-                    }
-                    else // is not on target
-                    {
-                        var hyperlink = MigrationHelpers.GetHyperlinkAddOperation(sourceHyperLink.Url);
-                        jsonPatchOperations.Add(hyperlink);
-                    }
-                }
-
                 if (jsonPatchOperations.Any())
                 {
                     WitBatchRequest witBatchRequest = GenerateWitBatchRequestFromJsonPatchOperations(jsonPatchOperations, targetId);
