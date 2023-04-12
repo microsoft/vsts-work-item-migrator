@@ -71,6 +71,8 @@
 ```
   "hyper-links-excludes": ["google.com", "yahoo.com"],
 ```
+#### ```preprocess``` when true, will includes a preprocess based on more than 1 field on the source to create additional mappings rules. 
+
 #### ```migrate-remote-link-as-hyperlink``` when true, will create remote links as hyperlink on Target. when true will create remote links as remote links on Target. Note: when false, links both items (source and target) to the remote link item.  
 
 #### ```log-level-for-file``` minimum log level that will be logged to the file. if omitted, defaults to information. acceptable values from lowest to highest log level: trace, debug, information, warning, error, critical.
