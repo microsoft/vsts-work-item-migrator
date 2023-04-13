@@ -20,7 +20,7 @@ namespace Common.Migration
 
         public bool IsEnabled(ConfigJson config)
         {
-            return true;//return config.ProcessSourceFields;
+            return config.ProcessSourceFields;
         }
 
         public Task Prepare(IMigrationContext context)
@@ -35,10 +35,10 @@ namespace Common.Migration
                 
                 foreach (var fieldName in context.Config.SourceFieldsProcessing.Keys)
                 {
-                    var sourceField = context.Config.SourceFieldsProcessing[fieldName]; //var sourceField = "Custom.ResourceRequestType";
-                    var fields = sourceField.Fields; //new[] { "Custom.SMEType","Custom.ResourceRequestType" };
-                    var format = sourceField.Format; //"{0};{1}"; 
-                    var type = sourceField.WorkItemType; //"Resource Request";
+                    var sourceField = context.Config.SourceFieldsProcessing[fieldName]; 
+                    var fields = sourceField.Fields; 
+                    var format = sourceField.Format;  
+                    var type = sourceField.WorkItemType; 
                 
                     string sourceWorkItemType = GetWorkItemTypeFromWorkItem(sourceWorkItem);
 

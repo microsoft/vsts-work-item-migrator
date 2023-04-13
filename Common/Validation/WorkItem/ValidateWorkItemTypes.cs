@@ -139,6 +139,44 @@ namespace Common.Validation
             }
         }
 
+        public void ValidateFieldsPreProcessor(IValidationContext context)
+        {
+            if (context.Config.SourceFieldsProcessing.Keys == null)
+            {
+                return;
+            }
+
+            foreach (var sourceFieldsProcessing in context.Config.SourceFieldsProcessing)
+            {
+                
+                foreach (var fieldName in context.Config.SourceFieldsProcessing.Keys)
+                    {
+                        var sourceField = context.Config.SourceFieldsProcessing[fieldName]; 
+                        var fields = sourceField.Fields; 
+                        var type = sourceField.WorkItemType; 
+
+                        //Validate fieldName
+                        if (!context.SourceTypesAndFields.ContainsKey(fieldName))
+                        {
+                        throw new ValidationException($"Source field do not contain {fieldName} that is specified in the configuration file.");
+                        }
+                        //validate key
+                        if (!context.SourceTypesAndFields.ContainsKey(type.ToString()))
+                        {
+                        throw new ValidationException($"Work item type do not contain {type} that is specified in the configuration file.");
+                        }
+                        //validate fields
+                        foreach ( var field in fields)
+                        {
+                            if (!context.SourceTypesAndFields.ContainsKey(field))
+                            {
+                            throw new ValidationException($"Source field do not contain {field} that is specified in the configuration file.");
+                            }   
+                        }
+                    }
+
+            }        
+        }
         public async Task Validate(IValidationContext context, WorkItem workItem)
         {
             var type = (string)workItem.Fields[FieldNames.WorkItemType];
