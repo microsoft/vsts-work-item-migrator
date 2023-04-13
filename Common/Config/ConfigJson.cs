@@ -105,6 +105,13 @@ namespace Common.Config
         [DefaultValue(false)]
         public bool MigrateRemoteLinkAsHyperLink { get; set; }
 
+        [JsonProperty(PropertyName = "process-source-fields", DefaultValueHandling = DefaultValueHandling.Populate)]
+        [DefaultValue(false)]
+        public bool ProcessSourceFields { get; set; }
+
+        [JsonProperty(PropertyName = "source-fields-processing", DefaultValueHandling = DefaultValueHandling.Populate)]
+        public Dictionary<string, SourceFieldsMap> SourceFieldsProcessing { get; set; }
+
         [JsonProperty(PropertyName = "log-level-for-file", DefaultValueHandling = DefaultValueHandling.Populate)]
         [DefaultValue(LogLevel.Information)]
         public LogLevel LogLevelForFile { get; set; }
