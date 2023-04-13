@@ -32,20 +32,20 @@ namespace Common.Migration
         {
             foreach (var sourceWorkItem in batchContext.SourceWorkItems)
             {
-                
+
                 foreach (var fieldName in context.Config.SourceFieldsProcessing.Keys)
                 {
-                    var sourceField = context.Config.SourceFieldsProcessing[fieldName]; 
-                    var fields = sourceField.Fields; 
-                    var format = sourceField.Format;  
-                    var type = sourceField.WorkItemType; 
-                
+                    var sourceField = context.Config.SourceFieldsProcessing[fieldName];
+                    var fields = sourceField.Fields;
+                    var format = sourceField.Format;
+                    var type = sourceField.WorkItemType;
+
                     string sourceWorkItemType = GetWorkItemTypeFromWorkItem(sourceWorkItem);
 
-                    if(sourceWorkItemType == type )
+                    if (sourceWorkItemType == type)
                     {
-                    var formatted = string.Format(format, fields.Select(f => sourceWorkItem.Fields.GetValueOrDefault(f)).ToArray());
-                    sourceWorkItem.Fields[fieldName] = formatted;
+                        var formatted = string.Format(format, fields.Select(f => sourceWorkItem.Fields.GetValueOrDefault(f)).ToArray());
+                        sourceWorkItem.Fields[fieldName] = formatted;
                     }
                 }
             }

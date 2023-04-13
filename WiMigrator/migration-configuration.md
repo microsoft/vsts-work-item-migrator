@@ -71,7 +71,7 @@
 ```
   "hyper-links-excludes": ["google.com", "yahoo.com"],
 ```
-#### ```preprocess``` when true, will includes a preprocess based on more than 1 field on the source to create additional mappings rules. 
+#### ```process-source-fields``` when true, will includes a preprocess based on more than 1 field on the source to create additional mappings rules. 
 
 #### ```migrate-remote-link-as-hyperlink``` when true, will create remote links as hyperlink on Target. when true will create remote links as remote links on Target. Note: when false, links both items (source and target) to the remote link item.  
 
@@ -120,6 +120,22 @@
     }
   },
 ```
+
+
+#### ```source-fields-processing```  used to provided mapping dictionaries that can be used to map literal values for certain fields in the `process-source-fields` config.
+```
+ "source-fields-processing": {
+    "Custom.ResourceRequestType": {
+      "fields": [
+        "Custom.ResourceRequestType",
+        "Custom.SMEType"
+      ],
+      "format": "{0};{1}",
+      "specific-to-type": "Resource Request"
+    }
+ },
+```
+
 
 ```send-email-notification``` when true, will send a run summary email if there are details in the Email Notification Message
 
