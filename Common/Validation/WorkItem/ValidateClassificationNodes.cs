@@ -43,11 +43,15 @@ namespace Common.Validation
                 throw new ValidationException($"Could not find source project from area path {workItem.Fields[FieldNames.AreaPath]} for work item with id {workItem.Id}");
             }
 
+            AreaAndIterationPathTree.ReplaceRemainingPathComponents(areaPath, context.Config.AreaPathMappings, out areaPath);
+
             if (!AreaAndIterationPathTree.TryReplaceLeadingProjectName(iterationPath, context.Config.SourceConnection.Project, context.Config.TargetConnection.Project, out iterationPath))
             {
                 // This is a fatal error because this implies the query is cross project which we do not support, so bail out immediately
                 throw new ValidationException($"Could not find source project from iteration path {workItem.Fields[FieldNames.IterationPath]} for work item with id {workItem.Id}");
             }
+
+            AreaAndIterationPathTree.ReplaceRemainingPathComponents(iterationPath, context.Config.IterationPathMappings, out iterationPath);
 
             if (!context.ValidatedAreaPaths.Contains(areaPath) && !context.SkippedAreaPaths.Contains(areaPath))
             {

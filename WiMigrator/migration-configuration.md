@@ -60,6 +60,20 @@
 
 #### ```default-iteration-path``` when the iteration path doesn't exist on the target project, the migrator will use this iteration path instead of defaulting to the root. note: if skip-work-items-with-missing-iteration-path is true, this setting is ignored.
 
+#### ```area-path-mappings```  used to map areas paths from source to target
+```
+"area-path-mappings": {
+  "Area 1\\Child A": "Area A\\Child 1",
+  "Source Area 2": "Target Area 2"
+}
+```
+#### ```iteration-path-mappings```  used to map iterations paths from source to target
+```
+"iteration-path-mappings": {
+  "Iteration A": "Iteration 1"
+}
+```
+
 #### ```clear-identity-display-names``` if the account has any identities with emojis, it's possible migration will fail if the identity with an emoji has not been added to the account. This setting will remove the display portion of the identity to ensure migration will succeed.
 
 #### ```ensure-identities``` when true, will add any identities that are referenced by work items to the account, adding them to the Licensed Users group.  This applies only to VSTS, not TFS. when false, if any identity that is referenced by the work item does not exist it will be created as a non-identity value which can cause issues for query and in the case of special characters in the name the work item will fail to be migrated.

@@ -128,6 +128,12 @@ namespace Common.Config
         [JsonProperty(PropertyName = "mapped-work-items", DefaultValueHandling = DefaultValueHandling.Populate)]
         public Dictionary<string, int> MappedWorkItems { get; set; }
 
+        [JsonProperty(PropertyName = "iteration-path-mappings", DefaultValueHandling = DefaultValueHandling.Populate)]
+        public Dictionary<string, string> IterationPathMappings { get; set; }
+
+        [JsonProperty(PropertyName = "area-path-mappings", DefaultValueHandling = DefaultValueHandling.Populate)]
+        public Dictionary<string, string> AreaPathMappings { get; set; }
+
         [JsonProperty(PropertyName = "send-email-notification", DefaultValueHandling = DefaultValueHandling.Populate)]
         [DefaultValue(false)]
         public bool SendEmailNotification { get; set; }

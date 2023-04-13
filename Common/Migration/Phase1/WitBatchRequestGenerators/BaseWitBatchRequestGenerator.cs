@@ -285,6 +285,7 @@ namespace Common.Migration
             if (sourceField.Key.Equals(FieldNames.AreaPath, StringComparison.OrdinalIgnoreCase))
             {
                 string targetPathName = GetTargetPathName(sourceField.Value as string, sourceProject, targetProject);
+                AreaAndIterationPathTree.ReplaceRemainingPathComponents(targetPathName, migrationContext.Config.AreaPathMappings, out targetPathName);
 
                 if (ExistsInTargetAreaPathList(targetPathName))
                 {
@@ -299,6 +300,7 @@ namespace Common.Migration
             else if (sourceField.Key.Equals(FieldNames.IterationPath, StringComparison.OrdinalIgnoreCase))
             {
                 string targetPathName = GetTargetPathName(sourceField.Value as string, sourceProject, targetProject);
+                AreaAndIterationPathTree.ReplaceRemainingPathComponents(targetPathName, migrationContext.Config.IterationPathMappings, out targetPathName);
 
                 if (ExistsInTargetIterationPathList(targetPathName))
                 {

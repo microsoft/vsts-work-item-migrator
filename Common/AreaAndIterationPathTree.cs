@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
-using Logging;
 
 namespace Common
 {
@@ -64,6 +64,26 @@ namespace Common
             }
 
             return replacedInput != null;
+        }
+
+        public static void ReplaceRemainingPathComponents(string input, Dictionary<string, string> mappings, out string replaced)
+        {
+            replaced = input;
+
+            if (mappings == null || mappings.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var map in mappings)
+            {
+                var pattern = Regex.Escape($"\\{map.Key}");
+                if (Regex.IsMatch(input, pattern, RegexOptions.IgnoreCase))
+                {
+                    replaced = Regex.Replace(input, pattern, $"\\{map.Value}", RegexOptions.IgnoreCase);
+                    break;
+                }
+            }
         }
 
         private void CreateAreaPathList(WorkItemClassificationNode headnode)
