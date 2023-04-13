@@ -81,6 +81,8 @@ namespace Common.Validation
 
             // handle condition of activated/not activated:
             ValidateFieldsMapping(context);
+
+            ValidateFieldsPreProcessor(context);
         }
 
         public void ValidateFieldsMapping(IValidationContext context)
