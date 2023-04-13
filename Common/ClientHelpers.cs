@@ -6,14 +6,14 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Config;
+using Common.Migration;
+using Logging;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Logging;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.Common;
-using Common.Config;
-using Common.Migration;
-using Logging;
 
 namespace Common
 {
@@ -41,7 +41,7 @@ namespace Common
         public static string GetWorkItemApiEndpoint(string account, int workItemId)
         {
             account = account.TrimEnd('/');
-            return $"{account}/_apis/wit/workItems/{workItemId}";
+            return $"{account}/_workitems/edit/{workItemId}";
         }
 
         /// <summary>

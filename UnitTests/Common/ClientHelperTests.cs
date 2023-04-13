@@ -17,7 +17,7 @@ namespace UnitTests.Common
             string account = "accountEndingInSlash/";
             int workItemId = 777;
 
-            string expected = "accountEndingInSlash/_apis/wit/workItems/777";
+            string expected = "accountEndingInSlash/_workitems/edit/777";
 
             string actual = ClientHelpers.GetWorkItemApiEndpoint(account, workItemId);
 
@@ -30,7 +30,7 @@ namespace UnitTests.Common
             string account = "accountWithoutSlash";
             int workItemId = 777;
 
-            string expected = "accountWithoutSlash/_apis/wit/workItems/777";
+            string expected = "accountWithoutSlash/_workitems/edit/777";
 
             string actual = ClientHelpers.GetWorkItemApiEndpoint(account, workItemId);
 
@@ -40,7 +40,7 @@ namespace UnitTests.Common
         [TestMethod]
         public void GetWorkItemIdFromApiEndpoint_ReturnsCorrectResultWhenEndpointContainsIdAtEnd()
         {
-            string endpointUri = "https://dev.azure.com/account/_apis/wit/workItems/3543";
+            string endpointUri = "https://dev.azure.com/account/_workitems/edit/3543";
 
             int expected = 3543;
 
@@ -53,7 +53,7 @@ namespace UnitTests.Common
         [TestMethod]
         public void GetWorkItemIdFromApiEndpoint_ReturnsCorrectResultWhenEndpointContainsIdFollowedBySlashAtEnd()
         {
-            string endpointUri = "https://dev.azure.com/account/_apis/wit/workItems/3543/";
+            string endpointUri = "https://dev.azure.com/account/_workitems/edit/3543/";
 
             int expected = 3543;
 
@@ -65,7 +65,7 @@ namespace UnitTests.Common
         [TestMethod]
         public void GetWorkItemIdFromApiEndpoint_ReturnsCorrectResultWhenEndpointContainsQueryString()
         {
-            string endpointUri = "https://dev.azure.com/account/_apis/wit/workItems/3543?bypassRules=True&suppressNotifications=True&api-version=4.0";
+            string endpointUri = "https://dev.azure.com/account/_workitems/edit/3543?bypassRules=True&suppressNotifications=True&api-version=4.0";
 
             int expected = 3543;
 

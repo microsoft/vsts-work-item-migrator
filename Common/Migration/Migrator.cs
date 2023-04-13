@@ -259,24 +259,6 @@ namespace Common.Migration
             throw new Exception($"Could not find hyperlink to source work item on target work item with id: {targetId}. Expected source work item id: {sourceId}");
         }
 
-        private WorkItemRelation GetHyperlinkIfExistsOnTarget(WorkItem targetWorkItem, string href)
-        {
-            if (targetWorkItem.Relations == null)
-            {
-                return null;
-            }
-
-            foreach (WorkItemRelation targetRelation in targetWorkItem.Relations)
-            {
-                if (targetRelation.Rel.Equals(Constants.Hyperlink) && targetRelation.Url.Equals(href, StringComparison.OrdinalIgnoreCase))
-                {
-                    return targetRelation;
-                }
-            }
-
-            return null;
-        }
-
         private RevAndPhaseStatus GetRevAndPhaseStatus(WorkItem targetWorkItem, int sourceWorkItemId)
         {
             if (targetWorkItem.Relations != null)

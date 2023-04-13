@@ -15,8 +15,8 @@ namespace Common
             {
                 var hyperlinkToSourceWorkItem = context.WorkItemIdsUris[sourceId];
 
-                var sourceParts = Regex.Split(hyperlinkToSourceWorkItem, "/_apis/wit/workitems/", RegexOptions.IgnoreCase);
-                var targetParts = Regex.Split(relation.Url, "/_apis/wit/workitems/", RegexOptions.IgnoreCase);
+                var sourceParts = Regex.Split(hyperlinkToSourceWorkItem, "/_workitems/edit/", RegexOptions.IgnoreCase);
+                var targetParts = Regex.Split(relation.Url, "/_workitems/edit/", RegexOptions.IgnoreCase);
 
                 if (sourceParts.Length == 2 && targetParts.Length == 2)
                 {

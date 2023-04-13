@@ -220,10 +220,14 @@ namespace Common
                     return await client.QueryByWiqlAsync(wiql, project: project, top: queryPageSize);
                 }, 5);
 
-                workItemIdsUris.AddRange(queryResult.WorkItems.Where(w => !workItemIdsUris.ContainsKey(w.Id)).ToDictionary(k => k.Id, v => RemoveProjectGuidFromUrl(v.Url)));
+                var uris = queryResult
+                            .WorkItems
+                            .Where(w => !workItemIdsUris.ContainsKey(w.Id))
+                            .ToDictionary(k => k.Id, v => ConvertRemoteLinkToHyperlink(RemoveProjectGuidFromUrl(v.Url)));
+                workItemIdsUris.AddRange(uris);
 
                 Logger.LogTrace(LogDestination.File, $"Getting work item ids page {page} with last id {id} for {client.BaseAddress.Host} returned {queryResult.WorkItems.Count()} results and total result count is {workItemIdsUris.Count}");
-                
+
                 //keeping a list as well because the Dictionary doesnt guarantee ordering 
                 List<int> workItemIdsPage = queryResult.WorkItems.Select(k => k.Id).ToList();
                 if (!workItemIdsPage.Any())
@@ -275,7 +279,7 @@ namespace Common
             return $"{InjectWhereClause(query, pageableClause)} ORDER BY System.Watermark, System.Id";
         }
 
-        private static string InjectWhereClause(string query, string clause) 
+        private static string InjectWhereClause(string query, string clause)
         {
             var lastWhereClauseIndex = query.LastIndexOf(" WHERE ", StringComparison.OrdinalIgnoreCase);
             if (lastWhereClauseIndex > 0)
@@ -299,6 +303,11 @@ namespace Common
         {
             var parts = url.Split("/", StringSplitOptions.None);
             return string.Join("/", parts.Where(p => !Guid.TryParse(p, out Guid _)));
+        }
+
+        private static string ConvertRemoteLinkToHyperlink(string url)
+        {
+            return url.Replace("_apis/wit/workitems", "_workitems/edit", StringComparison.OrdinalIgnoreCase);
         }
 
         public async static Task<WorkItemClassificationNode> GetClassificationNode(WorkItemTrackingHttpClient client, string project, TreeStructureGroup structureGroup)
