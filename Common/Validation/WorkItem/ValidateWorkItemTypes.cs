@@ -157,20 +157,20 @@ namespace Common.Validation
                     var fields = sourceField.Fields;
                     var type = sourceField.WorkItemType;
 
-                    //Validate fieldName
-                    if (!context.SourceTypesAndFields.ContainsKey(fieldName))
-                    {
-                        throw new ValidationException($"Source field do not contain {fieldName} that is specified in process-source-fields.");
-                    }
                     //validate key
-                    if (!context.SourceTypesAndFields.ContainsKey(type.ToString()))
+                    if (!context.SourceTypesAndFields.ContainsKey(type))
                     {
                         throw new ValidationException($"Work item type do not contain {type} that is specified in process-source-fields.");
+                    }
+                    //Validate fieldName
+                    if (!context.SourceFields.ContainsKey(fieldName))
+                    {
+                        throw new ValidationException($"Source field do not contain {fieldName} that is specified in process-source-fields.");
                     }
                     //validate fields
                     foreach (var field in fields)
                     {
-                        if (!context.SourceTypesAndFields.ContainsKey(field))
+                        if (!context.SourceFields.ContainsKey(field))
                         {
                             throw new ValidationException($"Source field do not contain {field} that is specified in process-source-fields.");
                         }
