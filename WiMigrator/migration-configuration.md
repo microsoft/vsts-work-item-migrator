@@ -78,8 +78,6 @@
 
 #### ```ensure-identities``` when true, will add any identities that are referenced by work items to the account, adding them to the Licensed Users group.  This applies only to VSTS, not TFS. when false, if any identity that is referenced by the work item does not exist it will be created as a non-identity value which can cause issues for query and in the case of special characters in the name the work item will fail to be migrated.
 
-#### ```include-web-link``` when true, will include the web link in addition to the REST link for the source work item on the target.
-
 #### ```hyper-links-excludes``` can be used to filter out hyperlinks based on the provided excluded words list. For example, the following config will exclude any hyperlink that contains google.com or yahoo.com from being migrated.
 
 ```

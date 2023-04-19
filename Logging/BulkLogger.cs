@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
@@ -110,15 +110,15 @@ namespace Logging
                     AppendToFile(content);
                 }, 5);
             }
-            catch (UnauthorizedAccessException ex)
+            catch (UnauthorizedAccessException)
             {
                 Console.WriteLine($"Cannot write to the log file because you are not authorized to access it. Please try running this application as administrator or moving it to a folder location that does not require special access.");
-                throw ex;
+                throw;
             }
-            catch (PathTooLongException ex)
+            catch (PathTooLongException)
             {
                 Console.WriteLine($"Cannot write to the log file because the file path is too long. Please store your files for this WiMigrator application in a folder location with a shorter path name.");
-                throw ex;
+                throw;
             }
             catch (Exception ex)
             {

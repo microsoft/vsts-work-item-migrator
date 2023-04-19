@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.Migration;
+using Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
-using Common.Migration;
-using Logging;
 
 namespace Common.ApiWrappers
 {
@@ -24,7 +24,7 @@ namespace Common.ApiWrappers
             catch (Exception e)
             {
                 Logger.LogError(LogDestination.File, $"Exception in MakeRequest {e.Message}");
-                throw e;
+                throw;
                 //we continue migration even if something failed 
             }
         }
@@ -36,7 +36,7 @@ namespace Common.ApiWrappers
             Logger.LogError(LogDestination.All, $"Exception during batch {batchContext.BatchId}: {exceptionMessage}");
             MarkBatchAsFailed(batchContext, sourceIds, FailureReason.CriticalError);
         }
-        
+
         public static bool ResponsesLackExpectedData(IList<WitBatchResponse> witBatchResponses, IList<(int SourceId, WitBatchRequest WitBatchRequest)> sourceIdToWitBatchRequests)
         {
             return (witBatchResponses == null || witBatchResponses.Count == 0) && sourceIdToWitBatchRequests.Any();

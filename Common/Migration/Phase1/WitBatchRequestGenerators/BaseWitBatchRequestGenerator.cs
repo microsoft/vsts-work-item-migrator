@@ -307,6 +307,10 @@ namespace Common.Migration
             {
                 targetField = new KeyValuePair<string, object>(sourceField.Key, targetProject);
             }
+            else
+            {
+                throw new NotImplementedException("Source field requires ProjectName update, but is not AreaPath, IterationPath or TeamProject.");
+            }
 
             return targetField;
         }

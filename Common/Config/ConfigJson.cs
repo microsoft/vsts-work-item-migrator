@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -93,10 +93,6 @@ namespace Common.Config
         [JsonProperty(PropertyName = "ensure-identities", DefaultValueHandling = DefaultValueHandling.Populate)]
         [DefaultValue(false)]
         public bool EnsureIdentities { get; set; }
-
-        [JsonProperty(PropertyName = "include-web-link", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [DefaultValue(false)]
-        public bool IncludeWebLink { get; set; }
 
         [JsonProperty(PropertyName = "hyper-links-excludes", DefaultValueHandling = DefaultValueHandling.Populate)]
         public List<string> HyperLinkExcludes { get; set; }

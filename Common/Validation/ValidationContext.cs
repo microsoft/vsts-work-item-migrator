@@ -74,9 +74,9 @@ namespace Common.Validation
 
         private void LogConfigData()
         {
-            Logger.LogInformation("Config data:");
+            Logger.LogInformation(LogDestination.File, "Config data:");
             MemoryStream stream = new MemoryStream();
-            
+
             using (StreamWriter sw = new StreamWriter(stream))
             {
                 using (JsonWriter writer = new JsonTextWriter(sw))
@@ -88,10 +88,10 @@ namespace Common.Validation
 
                     writer.Flush();
                     stream.Position = 0;
-                    
+
                     StreamReader sr = new StreamReader(stream);
                     string output = sr.ReadToEnd();
-                    Logger.LogInformation(output);
+                    Logger.LogInformation(LogDestination.File, output);
                 }
             }
         }

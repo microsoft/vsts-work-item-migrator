@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
+using Logging;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Logging;
 
 namespace Common.Config
 {
@@ -30,25 +30,25 @@ namespace Common.Config
             {
                 this.JsonText = GetJsonFromFile(filePath);
             }
-            catch (FileNotFoundException ex)
+            catch (FileNotFoundException)
             {
                 Logger.LogError("Required JSON configuration file was not found. Please ensure that this file is in the correct location.");
-                throw ex;
+                throw;
             }
-            catch (PathTooLongException ex)
+            catch (PathTooLongException)
             {
                 Logger.LogError("Required JSON configuration file could not be accessed because the file path is too long. Please store your files for this WiMigrator application in a folder location with a shorter path name.");
-                throw ex;
+                throw;
             }
-            catch (UnauthorizedAccessException ex)
+            catch (UnauthorizedAccessException)
             {
                 Logger.LogError("Cannot read from the JSON configuration file because you are not authorized to access it. Please try running this application as administrator or moving it to a folder location that does not require special access.");
-                throw ex;
+                throw;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Logger.LogError("Cannot read from the JSON configuration file. Please ensure it is formatted properly.");
-                throw ex;
+                throw;
             }
         }
 
@@ -75,10 +75,10 @@ namespace Common.Config
                     result.LinkParallelism = Environment.ProcessorCount;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Logger.LogError("Cannot deserialize the JSON text from configuration file. Please ensure it is formatted properly.");
-                throw ex;
+                throw;
             }
 
             return result;
