@@ -210,16 +210,7 @@ namespace Common.Migration
 
                 if (!string.IsNullOrEmpty(targetFieldValueString))
                 {
-                    string fixedTargetFieldValue;
-                    if (targetFieldValueString.Contains('<'))
-                    {
-                        int index = targetFieldValueString.IndexOf('<');
-                        fixedTargetFieldValue = targetFieldValueString.Substring(index);
-                    }
-                    else
-                    {
-                        fixedTargetFieldValue = Regex.Replace(targetFieldValueString, @"[\p{C}\p{S}]*", "");
-                    }
+                    string fixedTargetFieldValue = Regex.Replace(targetFieldValueString, @"\u00a9|\u00ae|\ufffd|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]", "");
 
                     KeyValuePair<string, object> targetFieldNoSanta = new KeyValuePair<string, object>(targetField.Key, fixedTargetFieldValue);
                     targetField = targetFieldNoSanta;

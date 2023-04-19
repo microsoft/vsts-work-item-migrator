@@ -214,13 +214,6 @@ namespace Common.Migration
 
                 jsonPatchOperations.Add(GetAddHyperlinkWithCommentOperation(targetWorkItems, state, sourceId, targetId, sourceWorkItem, enabledPhaseStatuses));
 
-                if (this.context.Config.IncludeWebLink)
-                {
-                    var link = (ReferenceLink)sourceWorkItem.Links.Links["html"];
-                    var addWebLinkOperation = MigrationHelpers.GetHyperlinkAddOperation(link.Href);
-                    jsonPatchOperations.Add(addWebLinkOperation);
-                }
-
                 if (jsonPatchOperations.Any())
                 {
                     WitBatchRequest witBatchRequest = GenerateWitBatchRequestFromJsonPatchOperations(jsonPatchOperations, targetId);
