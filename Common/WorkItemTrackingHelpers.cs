@@ -130,7 +130,13 @@ namespace Common
             // can't use the WorkItemTrackingHttpClient since it expects either a file or a stream.
             var attachmentReference = await RetryHelper.RetryAsync(async () =>
             {
-                var request = new HttpRequestMessage(HttpMethod.Post, $"{connection.Uri}/_apis/wit/attachments?uploadType=chunked&api-version=3.2");
+                //Create and empty content for the attachement reference POST so that we don't get an error from the server for sending the 
+                //"The request indicated a Content-Type of "application/x-www-form-urlencoded" for method type "POST" which is not supported"
+                var content = new ByteArrayContent(new byte[] { });
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+                content.Headers.ContentLength = 0;
+
+                var request = new HttpRequestMessage(HttpMethod.Post, $"{connection.Uri}/_apis/wit/attachments?uploadType=chunked&api-version=3.2") { Content = content };
                 var response = await httpClient.SendAsync(request);
 
                 if (response.IsSuccessStatusCode)
@@ -223,7 +229,7 @@ namespace Common
                 workItemIdsUris.AddRange(queryResult.WorkItems.Where(w => !workItemIdsUris.ContainsKey(w.Id)).ToDictionary(k => k.Id, v => RemoveProjectGuidFromUrl(v.Url)));
 
                 Logger.LogTrace(LogDestination.File, $"Getting work item ids page {page} with last id {id} for {client.BaseAddress.Host} returned {queryResult.WorkItems.Count()} results and total result count is {workItemIdsUris.Count}");
-                
+
                 //keeping a list as well because the Dictionary doesnt guarantee ordering 
                 List<int> workItemIdsPage = queryResult.WorkItems.Select(k => k.Id).ToList();
                 if (!workItemIdsPage.Any())
@@ -275,7 +281,7 @@ namespace Common
             return $"{InjectWhereClause(query, pageableClause)} ORDER BY System.Watermark, System.Id";
         }
 
-        private static string InjectWhereClause(string query, string clause) 
+        private static string InjectWhereClause(string query, string clause)
         {
             var lastWhereClauseIndex = query.LastIndexOf(" WHERE ", StringComparison.OrdinalIgnoreCase);
             if (lastWhereClauseIndex > 0)
