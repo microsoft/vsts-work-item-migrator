@@ -1,3 +1,7 @@
+> 🚨 This repository is no longer under active development and has been archived. We are not planning any additional features, updates, or maintenance at this time.
+>
+> The repository will remain available for reference, but we will no longer be accepting issues, pull requests, or other contributions
+
 # Introduction 
 WiMigrator is a command line tool designed with the following goals in mind:
 * Migrate work items from one Azure DevOps/TFS project to another
