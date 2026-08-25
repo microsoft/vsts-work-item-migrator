@@ -4,8 +4,6 @@ WiMigrator is a command line tool designed with the following goals in mind:
 * Real world example of how to use the WIT REST APIs
 * Cross platform support
 
-![Build Status](https://github.com/microsoft/vsts-work-item-migrator/workflows/Build/badge.svg)
-
 # Features
 * Migrate the latest revision of a work item or set of work items based on the provided query, including:
   * Work item links (for work items within the query results set) 
