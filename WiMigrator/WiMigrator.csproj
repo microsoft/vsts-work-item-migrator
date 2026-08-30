@@ -13,7 +13,7 @@
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="15.131.0-preview" />
     <PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="15.131.0-preview" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.4.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />    
   </ItemGroup>
