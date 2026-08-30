@@ -43,6 +43,8 @@
 
 
 #### ```move-attachments``` migrate attachments
+#### ```move-area-paths``` migrate area paths
+#### ```move-iterations``` migrate iterations
 
 #### ```move-links``` preserve and migrate work item links from source to target if the linked work item is part of the current query or it has been previously migrated.
 

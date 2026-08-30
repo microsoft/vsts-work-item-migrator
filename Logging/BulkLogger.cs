@@ -22,7 +22,7 @@ namespace Logging
             this.bulkLoggerCheckTimer = new Timer(BulkLoggerCheck, "Some state", TimeSpan.FromSeconds(LoggingConstants.CheckInterval), TimeSpan.FromSeconds(LoggingConstants.CheckInterval));
             this.stopwatch = Stopwatch.StartNew();
             this.filePath = GetFilePathBasedOnTime();
-            Console.WriteLine($"Detailed logging sent to file: {Directory.GetCurrentDirectory()}\\{filePath}");
+            Console.WriteLine($"[Info] [{DateTime.Now.ToString("HH:mm:ss.fff")}] Detailed logging sent to file: {Directory.GetCurrentDirectory()}\\{filePath}");
         }
 
         public void WriteToQueue(LogItem logItem)

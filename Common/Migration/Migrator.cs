@@ -348,6 +348,32 @@ namespace Common.Migration
             batchContext.SourceWorkItems = await WorkItemTrackingHelpers.GetWorkItemsAsync(migrationContext.SourceClient.WorkItemTrackingHttpClient, workItemIds, expand: expand);
         }
 
+        /// <summary>
+        /// Populates migrationContext.SourceAreaAndIterationTree
+        /// </summary>
+        /// <param name="migrationContext"></param>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
+        public static async Task ReadSourceNodes(IMigrationContext migrationContext, string projectId)
+        {
+            var nodes = await WorkItemTrackingHelpers.GetClassificationNodes(migrationContext.SourceClient.WorkItemTrackingHttpClient, projectId);
+            migrationContext.SourceAreaAndIterationTree = new AreaAndIterationPathTree(nodes);
+        }
+
+        /// <summary>
+        /// Populates migrationContext.TargetAreaAndIterationTree, migrationContext.TargetAreaPaths, and migrationContext.TargetIterationPaths
+        /// </summary>
+        /// <param name="migrationContext"></param>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
+        public static async Task ReadTargetNodes(IMigrationContext migrationContext, string projectId)
+        {
+            var nodes = await WorkItemTrackingHelpers.GetClassificationNodes(migrationContext.TargetClient.WorkItemTrackingHttpClient, projectId);
+            migrationContext.TargetAreaAndIterationTree = new AreaAndIterationPathTree(nodes);
+            migrationContext.TargetAreaPaths = migrationContext.TargetAreaAndIterationTree.AreaPathList;
+            migrationContext.TargetIterationPaths = migrationContext.TargetAreaAndIterationTree.IterationPathList;
+        }
+
         public static int GetTargetId(int sourceId, IEnumerable<WorkItemMigrationState> workItemMigrationStates)
         {
             return workItemMigrationStates.First(a => a.SourceId == sourceId).TargetId.Value;

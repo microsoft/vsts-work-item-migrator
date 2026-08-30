@@ -36,5 +36,7 @@ namespace Common.Migration
         IList<string> UnsupportedFields { get; }
 
         IList<string> FieldsThatRequireSourceProjectToBeReplacedWithTargetProject { get; set; }
+        AreaAndIterationPathTree SourceAreaAndIterationTree { get; set; }
+        AreaAndIterationPathTree TargetAreaAndIterationTree { get; set; }
     }
 }
