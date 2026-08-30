@@ -3,6 +3,7 @@ using System.Linq;
 using Common.Config;
 using Logging;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace Common.Migration
 {
@@ -30,6 +31,11 @@ namespace Common.Migration
                 var workItemMigrationState = workItemsAndStateToMigrate.Where(w => w.SourceId == sourceWorkItem.Id.Value).FirstOrDefault();
                 if (workItemMigrationState != null && workItemMigrationState.TargetId.HasValue)
                 {
+                    if(batchContext.WorkItemMigrationState
+                            .Where(a => a.SourceId == sourceWorkItem.Id && a.Requirement.HasFlag(WorkItemMigrationState.RequirementForExisting.UpdateChangedDate)).Count() == 1) {
+                        Logger.LogInformation($"Updating ChangedDate on work item with source id {sourceWorkItem.Id}");
+                        sourceWorkItem.Fields["System.ChangedDate"] = DateTime.Now;
+                    }
                     batchContext.TargetIdToSourceWorkItemMapping.Add(workItemMigrationState.TargetId.Value, sourceWorkItem);
                 }
                 else

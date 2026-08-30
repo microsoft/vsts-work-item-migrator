@@ -76,6 +76,10 @@ namespace Common.Config
         [DefaultValue(false)]
         public bool SkipWorkItemsWithMissingAreaPath { get; set; }
 
+        [JsonProperty(PropertyName = "update-work-items-with-different-iteration-path", DefaultValueHandling = DefaultValueHandling.Populate)]
+        [DefaultValue(false)]
+        public bool UpdateWorkItemsWithDifferentIterationPath { get; set; }
+
         [JsonProperty(PropertyName = "skip-work-items-with-missing-iteration-path", DefaultValueHandling = DefaultValueHandling.Populate)]
         [DefaultValue(false)]
         public bool SkipWorkItemsWithMissingIterationPath { get; set; }

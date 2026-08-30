@@ -162,9 +162,16 @@ namespace Common.Validation
             else if (IsPhase2UpdateRequired(workItemMigrationState, targetWorkItem))
             {
                 workItemMigrationState.Requirement |= WorkItemMigrationState.RequirementForExisting.UpdatePhase2;
-            }
-            else
-            {
+            } else if (ValidationContext.Config.UpdateWorkItemsWithDifferentIterationPath == true && 
+                        !ValidationContext.SourceWorkItemIterationPath[(int)sourceId].Equals(targetWorkItem.Fields["System.IterationPath"]) 
+                    ) {
+                    workItemMigrationState.Requirement |= WorkItemMigrationState.RequirementForExisting.None;
+                    this.sourceWorkItemIdsThatHaveBeenUpdated.Add(sourceId);
+                    workItemMigrationState.Requirement |= WorkItemMigrationState.RequirementForExisting.UpdatePhase1;
+                    workItemMigrationState.Requirement |= WorkItemMigrationState.RequirementForExisting.UpdatePhase2;
+                    workItemMigrationState.Requirement |= WorkItemMigrationState.RequirementForExisting.UpdateChangedDate;
+                    Logger.LogInformation($"Work item with id {workItemMigrationState.SourceId} has different iteration path than target. Will update target (id {targetWorkItem.Id})");
+            } else {
                 workItemMigrationState.Requirement |= WorkItemMigrationState.RequirementForExisting.None;
             }
         }
